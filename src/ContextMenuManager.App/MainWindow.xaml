@@ -11,6 +11,27 @@
     </Window.SystemBackdrop>
 
     <Grid x:Name="Root">
+        <!--  Narrow windows put the details pane under the menu instead of beside it.  -->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="880" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="DetailsPane.(Grid.Row)" Value="1" />
+                        <Setter Target="DetailsPane.(Grid.Column)" Value="0" />
+                        <Setter Target="DetailsPane.(Grid.ColumnSpan)" Value="2" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -23,7 +44,10 @@
             Margin="16,10"
             Style="{StaticResource CaptionTextBlockStyle}" />
 
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer
+            Grid.Row="1"
+            HorizontalScrollBarVisibility="Disabled"
+            HorizontalScrollMode="Disabled">
             <StackPanel
                 MaxWidth="1100"
                 Margin="24,8,24,24"
@@ -90,7 +114,14 @@
                     Message="{x:Bind ViewModel.CaptureError, Mode=OneWay}"
                     Severity="Warning" />
 
-                <Grid Margin="0,8,0,0" ColumnSpacing="16">
+                <Grid
+                    Margin="0,8,0,0"
+                    ColumnSpacing="16"
+                    RowSpacing="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
@@ -174,6 +205,7 @@
 
                     <!--  Details of the clicked menu item.  -->
                     <Border
+                        x:Name="DetailsPane"
                         Grid.Column="1"
                         Padding="16"
                         VerticalAlignment="Top"

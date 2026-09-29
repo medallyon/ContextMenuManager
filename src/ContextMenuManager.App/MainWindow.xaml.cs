@@ -7,13 +7,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 using ContextMenuManager.Core;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.Graphics;
+using WinRT.Interop;
 
 namespace ContextMenuManager.App
 {
@@ -27,7 +30,22 @@ namespace ContextMenuManager.App
             SetTitleBar(TitleBarText);
             AppWindow.Resize(new SizeInt32(1200, 900));
             AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "AppIcon.ico"));
+
+            // Below this the menu and the target picker no longer fit side by side with their labels.
+            if (AppWindow.Presenter is OverlappedPresenter presenter)
+            {
+                double scale = GetDpiForWindow(WindowNative.GetWindowHandle(this)) / 96.0;
+                presenter.PreferredMinimumWidth = (int)(MinWindowWidth * scale);
+                presenter.PreferredMinimumHeight = (int)(MinWindowHeight * scale);
+            }
         }
+
+        private const int MinWindowWidth = 720;
+
+        private const int MinWindowHeight = 560;
+
+        [DllImport("user32.dll")]
+        private static extern uint GetDpiForWindow(IntPtr hwnd);
 
         private MainViewModel ViewModel { get; } = new MainViewModel();
 
