@@ -1,6 +1,9 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/ContextMenuManager.App/ContextMenuManager.App.csproj" />
+    <Project Path="src/ContextMenuManager.CmdPal/ContextMenuManager.CmdPal.csproj">
+      <Platform Project="x64" />
+    </Project>
     <Project Path="src/ContextMenuManager.Core/ContextMenuManager.Core.csproj" />
     <Project Path="src/ContextMenuManager.MenuCapture/ContextMenuManager.MenuCapture.csproj" />
   </Folder>

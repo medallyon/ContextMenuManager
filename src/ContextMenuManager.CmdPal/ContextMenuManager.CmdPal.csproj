@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Command Palette extension: an MSIX-packaged out-of-process COM server that Command Palette
+       finds through the com.microsoft.commandpalette app extension in Package.appxmanifest. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ContextMenuManager.CmdPal</RootNamespace>
+    <AssemblyName>ContextMenuManager.CmdPal</AssemblyName>
+    <WindowsSdkPackageVersion>10.0.26100.68-preview</WindowsSdkPackageVersion>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <SelfContained>true</SelfContained>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <Nullable>enable</Nullable>
+    <CsWinRTAotOptimizerEnabled>true</CsWinRTAotOptimizerEnabled>
+    <!-- The SDK winmd only defines interfaces the extension implements; there is nothing to register. -->
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);APPX1707</MSBuildWarningsAsMessages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\*.png" />
+  </ItemGroup>
+
+  <!-- Lets Visual Studio offer MSIX deploy/debug before the packages are restored. -->
+  <ItemGroup Condition="'$(EnableMsixTooling)'=='true'">
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CommandPalette.Extensions" Version="0.12.260812002" />
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+    <PackageReference Include="Shmuelie.WinRTServer" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.MSIX" Version="1.7.260903100">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ContextMenuManager.Core\ContextMenuManager.Core.csproj" />
+  </ItemGroup>
+</Project>

@@ -46,3 +46,4 @@ Use `win-arm64` and `-p:Platform=ARM64` for ARM. The output is self-contained: c
 - `src/ContextMenuManager.Core`: registry enumeration and toggling, packaged-entry enumeration, menu capture. No UI framework.
 - `src/ContextMenuManager.MenuCapture`: console helper that builds the real Explorer menu in a separate process, so a crashing or hanging shell extension can't take the app down.
 - `src/ContextMenuManager.App`: WinUI 3 app.
+- `src/ContextMenuManager.CmdPal`: PowerToys Command Palette extension (MSIX-packaged). Lists entries, toggles per-user ones, restarts Explorer.
