@@ -11,7 +11,13 @@
     <SelfContained>true</SelfContained>
     <!-- Unpackaged apps still need the MSIX tooling to put the .pri (strings, compiled XAML) into publish output. -->
     <EnableMsixTooling>true</EnableMsixTooling>
+    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Loose file for AppWindow.SetIcon; ApplicationIcon only covers the exe in Explorer. -->
+    <Content Include="Assets\AppIcon.ico" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />

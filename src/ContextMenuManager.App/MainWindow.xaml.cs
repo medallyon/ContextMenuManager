@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 
 using ContextMenuManager.Core;
@@ -25,6 +26,7 @@ namespace ContextMenuManager.App
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(TitleBarText);
             AppWindow.Resize(new SizeInt32(1200, 900));
+            AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "AppIcon.ico"));
         }
 
         private MainViewModel ViewModel { get; } = new MainViewModel();
