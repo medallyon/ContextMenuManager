@@ -9,6 +9,10 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
     strategy:
       matrix:
         include:
@@ -24,10 +28,20 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Publish
-        run: dotnet publish src/ContextMenuManager.App -c Release -r ${{ matrix.rid }} -p:Platform=${{ matrix.platform }} -o publish
+        run: |
+          # Tag builds take their version from the tag (v1.2.3), others keep Directory.Build.props
+          $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME.TrimStart('v') } else { $null }
+          $versionArg = if ($version) { "-p:Version=$version" } else { $null }
+          dotnet publish src/ContextMenuManager.App -c Release -r ${{ matrix.rid }} -p:Platform=${{ matrix.platform }} -o publish $versionArg
 
       - name: Zip
         run: Compress-Archive -Path publish/* -DestinationPath ContextMenuManager-${{ matrix.rid }}.zip
+
+      # Lets users check a download came from this repo's CI: gh attestation verify <zip> -R medallyon/ContextMenuManager
+      - uses: actions/attest-build-provenance@v2
+        if: github.event_name != 'pull_request'
+        with:
+          subject-path: ContextMenuManager-${{ matrix.rid }}.zip
 
       - uses: actions/upload-artifact@v4
         with:
@@ -45,7 +59,12 @@ jobs:
         with:
           merge-multiple: true
 
+      - name: Checksums
+        run: sha256sum *.zip > SHA256SUMS.txt
+
       - uses: softprops/action-gh-release@v2
         with:
-          files: '*.zip'
+          files: |
+            *.zip
+            SHA256SUMS.txt
           draft: true

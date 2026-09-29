@@ -15,6 +15,22 @@ No registry key is ever deleted, so every change can be undone. Explorer caches 
 
 All-users entries need administrator rights. Use **Restart as administrator** in the app.
 
+## Install
+
+Download the zip for your machine (`win-x64` or `win-arm64`) from [Releases](https://github.com/medallyon/ContextMenuManager/releases), extract it and run `ContextMenuManager.exe`.
+
+The exe is not code-signed yet, so Windows SmartScreen may show "Windows protected your PC" on first run. Click **More info**, then **Run anyway**. To skip the warning, unblock the zip before you extract it:
+
+```powershell
+Unblock-File .\ContextMenuManager-win-x64.zip
+```
+
+To check that a zip was built by this repo's GitHub Actions, compare it against `SHA256SUMS.txt` on the release, or run:
+
+```powershell
+gh attestation verify .\ContextMenuManager-win-x64.zip -R medallyon/ContextMenuManager
+```
+
 ## Build
 
 Needs the .NET 10 SDK.
