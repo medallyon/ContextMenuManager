@@ -9,7 +9,8 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Version>0.1.0</Version>
-    <Company>Context Menu Manager contributors</Company>
+    <Company>Tilman (Medallyon)</Company>
+    <Copyright>Copyright (c) 2026 Tilman (Medallyon). MIT license.</Copyright>
     <Product>Context Menu Manager</Product>
   </PropertyGroup>
 </Project>

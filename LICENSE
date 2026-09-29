@@ -1,7 +1,8 @@
 MIT License
 
-Copyright (c) 2026 Tilman
-Portions copyright (c) Microsoft Corporation.
+Copyright (c) 2026 Tilman (Medallyon)
+App icon (src/ContextMenuManager.App/Assets/AppIcon.ico) copyright (c) Microsoft Corporation,
+from PowerToys (https://github.com/microsoft/PowerToys), MIT license.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
