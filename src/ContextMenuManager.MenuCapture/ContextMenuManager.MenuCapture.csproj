@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Console subsystem so stdout is available; the app starts it with CreateNoWindow. -->
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ContextMenuManager.MenuCapture</RootNamespace>
+    <!-- Deployed next to the app, which launches it and shares its self-contained runtime. -->
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+</Project>

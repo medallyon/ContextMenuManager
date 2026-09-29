@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HklmElevationNotice.Title" xml:space="preserve">
+    <value>Some entries can&apos;t be edited here</value>
+  </data>
+  <data name="HklmElevationNotice.Message" xml:space="preserve">
+    <value>Restart as administrator to edit entries that apply to all users of this PC.</value>
+  </data>
+  <data name="RestartExplorerNotice.Title" xml:space="preserve">
+    <value>Changes will take effect after File Explorer restarts</value>
+  </data>
+  <data name="RestartExplorerNotice.Message" xml:space="preserve">
+    <value>Restarting File Explorer closes all open File Explorer windows.</value>
+  </data>
+  <data name="RestartExplorerButton.Content" xml:space="preserve">
+    <value>Restart File Explorer</value>
+  </data>
+  <data name="RefreshButton.Content" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="ConfirmAllUsers_Title" xml:space="preserve">
+    <value>Change this setting for all users?</value>
+  </data>
+  <data name="ConfirmAllUsers_Content" xml:space="preserve">
+    <value>You&apos;re about to change a context menu entry for every account on this PC, not just yours.</value>
+  </data>
+  <data name="ConfirmAllUsers_PrimaryButton" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="ConfirmAllUsers_CloseButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ConfirmWindowsOwned_Title" xml:space="preserve">
+    <value>This looks like a built-in Windows component</value>
+  </data>
+  <data name="ConfirmWindowsOwned_Content" xml:space="preserve">
+    <value>Disabling it may affect File Explorer or security software. Continue only if you&apos;re sure.</value>
+  </data>
+  <data name="ConfirmWindowsOwned_PrimaryButton" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="ConfirmWindowsOwned_CloseButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ScopeCurrentUser" xml:space="preserve">
+    <value>Current user</value>
+  </data>
+  <data name="ScopeAllUsers" xml:space="preserve">
+    <value>All users</value>
+  </data>
+  <data name="SourceClassic" xml:space="preserve">
+    <value>Classic</value>
+  </data>
+  <data name="SourceModern" xml:space="preserve">
+    <value>Modern</value>
+  </data>
+  <data name="RestartExplorerButtonInline.Content" xml:space="preserve">
+    <value>Restart File Explorer</value>
+  </data>
+  <data name="Windows11MenuCard.Header" xml:space="preserve">
+    <value>Windows 11 context menu</value>
+  </data>
+  <data name="Windows11MenuCard.Description" xml:space="preserve">
+    <value>Turn off to show the full Windows 10 style menu on right-click, without &quot;Show more options&quot;. Applies after Explorer restarts.</value>
+  </data>
+  <data name="PreviewTargetCard.Header" xml:space="preserve">
+    <value>Right-click on</value>
+  </data>
+  <data name="PreviewTargetCard.Description" xml:space="preserve">
+    <value>The menu Windows shows right now. Select an item to turn it on or off.</value>
+  </data>
+  <data name="PreviewTarget_Desktop.Content" xml:space="preserve">
+    <value>Desktop</value>
+  </data>
+  <data name="PreviewTarget_FolderBackground.Content" xml:space="preserve">
+    <value>Empty space in a folder</value>
+  </data>
+  <data name="PreviewTarget_Folder.Content" xml:space="preserve">
+    <value>A folder</value>
+  </data>
+  <data name="PreviewTarget_File.Content" xml:space="preserve">
+    <value>A file (.txt)</value>
+  </data>
+  <data name="PreviewTarget_Drive.Content" xml:space="preserve">
+    <value>A drive</value>
+  </data>
+  <data name="CaptureErrorNotice.Title" xml:space="preserve">
+    <value>Couldn&apos;t capture the menu</value>
+  </data>
+  <data name="CaptureTimeout" xml:space="preserve">
+    <value>The capture took too long and was stopped. A shell extension may be unresponsive.</value>
+  </data>
+  <data name="BuiltIn_View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="BuiltIn_SortBy" xml:space="preserve">
+    <value>Sort by</value>
+  </data>
+  <data name="BuiltIn_GroupBy" xml:space="preserve">
+    <value>Group by</value>
+  </data>
+  <data name="BuiltIn_Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="BuiltIn_Paste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="BuiltIn_PasteShortcut" xml:space="preserve">
+    <value>Paste shortcut</value>
+  </data>
+  <data name="BuiltIn_Undo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="BuiltIn_ShowMoreOptions" xml:space="preserve">
+    <value>Show more options</value>
+  </data>
+  <data name="PreviewOff" xml:space="preserve">
+    <value>Off</value>
+    <comment>Shown next to a context menu item that has been turned off</comment>
+  </data>
+  <data name="PreviewTurnedOffHeader" xml:space="preserve">
+    <value>Turned off</value>
+    <comment>Caption above the context menu items that are turned off and so no longer appear in the menu</comment>
+  </data>
+  <data name="PreviewBackButton.Content" xml:space="preserve">
+    <value>Back to the Windows 11 menu</value>
+  </data>
+  <data name="DetailsPlaceholder.Text" xml:space="preserve">
+    <value>Select an item in the menu to see where it comes from and turn it on or off.</value>
+  </data>
+  <data name="DetailsUnmanaged" xml:space="preserve">
+    <value>Part of File Explorer, or added by something Context Menu Manager can&apos;t turn off.</value>
+  </data>
+  <data name="DetailsLocationHeader.Text" xml:space="preserve">
+    <value>Registered at</value>
+  </data>
+  <data name="DetailsExtensionNote.Text" xml:space="preserve">
+    <value>This is a shell extension. Turning it off removes every item it adds.</value>
+  </data>
+  <data name="DetailsToggle.Header" xml:space="preserve">
+    <value>Show in the context menu</value>
+  </data>
+  <data name="RootDesktop" xml:space="preserve">
+    <value>Desktop</value>
+  </data>
+  <data name="RootFiles" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="RootFolders" xml:space="preserve">
+    <value>Folders</value>
+  </data>
+  <data name="RootBackground" xml:space="preserve">
+    <value>Folder background</value>
+  </data>
+  <data name="RootFilesAndFolders" xml:space="preserve">
+    <value>Files and folders</value>
+  </data>
+  <data name="RootDrives" xml:space="preserve">
+    <value>Drives</value>
+  </data>
+  <data name="AppTitle.Text" xml:space="preserve">
+    <value>Context Menu Manager</value>
+  </data>
+  <data name="PreviewGroupHeader.Text" xml:space="preserve">
+    <value>Context menu</value>
+  </data>
+  <data name="RestartAsAdminButton.Content" xml:space="preserve">
+    <value>Restart as administrator</value>
+  </data>
+</root>

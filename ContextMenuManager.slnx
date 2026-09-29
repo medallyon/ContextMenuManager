@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ContextMenuManager.App/ContextMenuManager.App.csproj" />
+    <Project Path="src/ContextMenuManager.Core/ContextMenuManager.Core.csproj" />
+    <Project Path="src/ContextMenuManager.MenuCapture/ContextMenuManager.MenuCapture.csproj" />
+  </Folder>
+</Solution>

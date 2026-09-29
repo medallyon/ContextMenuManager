@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ContextMenuManager.App</RootNamespace>
+    <AssemblyName>ContextMenuManager</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <UseWinUI>true</UseWinUI>
+    <!-- Unpackaged, self-contained: an xcopy/zip deploy with no runtime or package install. -->
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <SelfContained>true</SelfContained>
+    <!-- Unpackaged apps still need the MSIX tooling to put the .pri (strings, compiled XAML) into publish output. -->
+    <EnableMsixTooling>true</EnableMsixTooling>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
+    <PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.251219" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.6901" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ContextMenuManager.Core\ContextMenuManager.Core.csproj" />
+    <!-- Launched from the app's own folder (see ContextMenuPreview.RunCaptureHelperAsync). -->
+    <ProjectReference Include="..\ContextMenuManager.MenuCapture\ContextMenuManager.MenuCapture.csproj" />
+  </ItemGroup>
+</Project>
