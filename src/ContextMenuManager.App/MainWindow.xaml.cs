@@ -40,6 +40,8 @@ namespace ContextMenuManager.App
             }
         }
 
+        private const double MaxContentWidth = 1100;
+
         private const int MinWindowWidth = 720;
 
         private const int MinWindowHeight = 560;
@@ -48,6 +50,13 @@ namespace ContextMenuManager.App
         private static extern uint GetDpiForWindow(IntPtr hwnd);
 
         private MainViewModel ViewModel { get; } = new MainViewModel();
+
+        // A fixed width, never wider than the viewport, so no child's desired width can push the content past the window edge.
+        private void Scroller_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var margin = ContentPanel.Margin;
+            ContentPanel.Width = Math.Max(0, Math.Min(MaxContentWidth, e.NewSize.Width - margin.Left - margin.Right));
+        }
 
         // Intercepts the details toggle instead of a plain two-way binding, so HKLM (all-users) writes
         // and likely-Windows-owned entries can be confirmed before anything is written to the registry.

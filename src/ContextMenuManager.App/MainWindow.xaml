@@ -45,12 +45,16 @@
             Style="{StaticResource CaptionTextBlockStyle}" />
 
         <ScrollViewer
+            x:Name="Scroller"
             Grid.Row="1"
             HorizontalScrollBarVisibility="Disabled"
-            HorizontalScrollMode="Disabled">
+            HorizontalScrollMode="Disabled"
+            SizeChanged="Scroller_SizeChanged">
+            <!--  Width is set from the viewport in code; MaxWidth alone let the panel overflow below 1148 px.  -->
             <StackPanel
-                MaxWidth="1100"
+                x:Name="ContentPanel"
                 Margin="24,8,24,24"
+                HorizontalAlignment="Center"
                 Spacing="4">
                 <TextBlock
                     x:Uid="AppTitle"
@@ -103,7 +107,6 @@
                             <ComboBoxItem x:Uid="PreviewTarget_Drive" />
                         </ComboBox>
                         <Button x:Uid="RefreshButton" Click="{x:Bind ViewModel.LoadEntries}" />
-                        <Button x:Uid="RestartExplorerButtonInline" Click="{x:Bind ViewModel.RestartExplorer}" />
                     </StackPanel>
                 </tkcontrols:SettingsCard>
 

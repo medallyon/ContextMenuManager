@@ -171,9 +171,6 @@
   <data name="SourceModern" xml:space="preserve">
     <value>Modern</value>
   </data>
-  <data name="RestartExplorerButtonInline.Content" xml:space="preserve">
-    <value>Restart File Explorer</value>
-  </data>
   <data name="Windows11MenuCard.Header" xml:space="preserve">
     <value>Windows 11 context menu</value>
   </data>
