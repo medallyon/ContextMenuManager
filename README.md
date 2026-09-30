@@ -117,7 +117,7 @@ The extension ships inside the app zip. It needs [PowerToys](https://github.com/
 
 - The extension runs from the app's `CmdPal` folder. Switch it off before you move, update or delete the app, then switch it on again from the new copy.
 - Remove it by switching it off, or with `Get-AppxPackage Medallyon.ContextMenuManager.CmdPal | Remove-AppxPackage`.
-- "Open Context Menu Manager" finds `ContextMenuManager.exe` on your `PATH`, and opens the Releases page if it can't.
+- "Open Context Menu Manager" starts the app the extension was installed from. A hand-registered build looks for `ContextMenuManager.exe` on your `PATH`, then opens the Releases page.
 
 </details>
 

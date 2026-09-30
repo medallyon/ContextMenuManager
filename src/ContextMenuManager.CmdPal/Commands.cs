@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 using System;
+using System.IO;
 
 using ContextMenuManager.Core;
 using Microsoft.CommandPalette.Extensions;
@@ -97,11 +98,16 @@ internal sealed partial class OpenAppCommand : InvokableCommand
         Icon = Icons.App;
     }
 
-    // ponytail: finds the app only on PATH (winget's portable alias); a zip install elsewhere gets
-    // the releases page. Add a settings path or App Paths lookup if that bites.
+    // The app registers the extension from its own CmdPal subfolder. A build registered by hand
+    // has no app beside it, so fall back to PATH (winget's portable alias).
     public override ICommandResult Invoke()
     {
-        if (ShellHelpers.FileExistInPath(AppExe, out string path))
+        string besideApp = Path.Combine(AppContext.BaseDirectory, "..", AppExe);
+        if (File.Exists(besideApp))
+        {
+            ShellHelpers.OpenInShell(Path.GetFullPath(besideApp));
+        }
+        else if (ShellHelpers.FileExistInPath(AppExe, out string path))
         {
             ShellHelpers.OpenInShell(path);
         }
