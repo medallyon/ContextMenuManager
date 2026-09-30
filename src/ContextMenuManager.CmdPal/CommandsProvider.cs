@@ -17,7 +17,7 @@ public sealed partial class CommandsProvider : CommandProvider
         Icon = Icons.App;
         _commands =
         [
-            new CommandItem(new EntriesPage())
+            new CommandItem(new TargetsPage())
             {
                 Title = "Context menu entries",
                 Subtitle = "Turn Explorer right-click menu entries on and off",

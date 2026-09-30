@@ -1,6 +1,8 @@
 // Copyright (c) Tilman (Medallyon)
 // Licensed under the MIT license.
 
+using System;
+
 using ContextMenuManager.Core;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
@@ -9,21 +11,27 @@ namespace ContextMenuManager.CmdPal;
 
 internal sealed partial class ToggleEntryCommand : InvokableCommand
 {
-    private readonly EntryItem _item;
+    private readonly ContextMenuEntry _entry;
+
+    // Updates the row that shows the entry after a write.
+    private readonly Action _changed;
 
     // True for the command behind the confirmation prompt, so it writes without asking again.
     private readonly bool _confirmed;
 
-    public ToggleEntryCommand(EntryItem item, bool confirmed)
+    public ToggleEntryCommand(ContextMenuEntry entry, Action changed, bool confirmed)
     {
-        _item = item;
+        _entry = entry;
+        _changed = changed;
         _confirmed = confirmed;
-        Name = item.Entry.IsEnabled ? "Turn off" : "Turn on";
+        Refresh();
     }
+
+    public void Refresh() => Name = _entry.IsEnabled ? "Turn off" : "Turn on";
 
     public override ICommandResult Invoke()
     {
-        var entry = _item.Entry;
+        var entry = _entry;
         bool enable = !entry.IsEnabled;
 
         // Same extra step as the app: System32 handlers can break Explorer or security software.
@@ -33,7 +41,7 @@ internal sealed partial class ToggleEntryCommand : InvokableCommand
             {
                 Title = "This looks like a built-in Windows component",
                 Description = "Disabling it may affect File Explorer or security software. Continue only if you're sure.",
-                PrimaryCommand = new ToggleEntryCommand(_item, confirmed: true) { Name = "Continue" },
+                PrimaryCommand = new ToggleEntryCommand(entry, _changed, confirmed: true) { Name = "Continue" },
                 IsPrimaryCommandCritical = true,
             });
         }
@@ -44,7 +52,7 @@ internal sealed partial class ToggleEntryCommand : InvokableCommand
         }
 
         entry.IsEnabled = enable;
-        _item.Refresh();
+        _changed();
         string state = enable ? "on" : "off";
         return CommandResult.ShowToast(new ToastArgs
         {

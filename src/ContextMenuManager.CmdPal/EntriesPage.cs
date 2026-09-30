@@ -2,37 +2,16 @@
 // Licensed under the MIT license.
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 using ContextMenuManager.Core;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
-using Windows.Storage.Streams;
 
 namespace ContextMenuManager.CmdPal;
 
-internal static class Icons
-{
-    private static readonly byte[] AppPng = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Assets", "StoreLogo.png"));
-
-    // A new stream per use: every item that shows the icon reads its own copy.
-    public static IconInfo App => FromPng(AppPng);
-
-    // Command Palette reads the stream from its own process, which a wrapped MemoryStream can't serve.
-    public static IconInfo FromPng(byte[] png)
-    {
-        var stream = new InMemoryRandomAccessStream();
-        var writer = new DataWriter(stream);
-        writer.WriteBytes(png);
-        writer.StoreAsync().AsTask().GetAwaiter().GetResult();
-        stream.Seek(0);
-        return IconInfo.FromStream(stream);
-    }
-}
-
-// Every entry the app lists, filtered by Command Palette's own search box.
+// Every entry in one flat list, for Command Palette's search box: the menu pages only search one level.
 internal sealed partial class EntriesPage : ListPage
 {
     private IListItem[]? _items;
@@ -40,7 +19,7 @@ internal sealed partial class EntriesPage : ListPage
     public EntriesPage()
     {
         Name = "Open";
-        Title = "Context menu entries";
+        Title = "All entries";
         Icon = Icons.App;
         PlaceholderText = "Search context menu entries";
     }
@@ -72,14 +51,15 @@ internal sealed partial class EntriesPage : ListPage
 
 internal sealed partial class EntryItem : ListItem
 {
-    private static readonly Tag OffTag = new("Off");
+    private readonly ToggleEntryCommand? _toggle;
 
     public EntryItem(ContextMenuEntry entry)
     {
         Entry = entry;
         Title = entry.DisplayName;
         Subtitle = Describe(entry);
-        Command = entry.IsToggleable ? new ToggleEntryCommand(this, confirmed: false) : new NoOpCommand();
+        _toggle = entry.IsToggleable ? new ToggleEntryCommand(entry, Refresh, confirmed: false) : null;
+        Command = _toggle ?? (ICommand)new NoOpCommand();
         MoreCommands = [new CommandContextItem(new RestartExplorerCommand())];
         Refresh();
     }
@@ -88,21 +68,15 @@ internal sealed partial class EntryItem : ListItem
 
     public void Refresh()
     {
-        Tags = Entry.IsEnabled ? [] : [OffTag];
-        if (Command is ToggleEntryCommand toggle)
-        {
-            toggle.Name = Entry.IsEnabled ? "Turn off" : "Turn on";
-        }
+        Tags = Icons.OffTags(Entry);
+        _toggle?.Refresh();
     }
 
     public void LoadIcon()
     {
         try
         {
-            if (ContextMenuRegistry.LoadIcon(Entry.IconSpec)?.Png is { } png)
-            {
-                Icon = Icons.FromPng(png);
-            }
+            Icon = Icons.FromMenuIcon(ContextMenuRegistry.LoadIcon(Entry.IconSpec)) ?? Icon;
         }
         catch (Exception)
         {
