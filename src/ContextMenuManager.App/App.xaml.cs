@@ -1,6 +1,10 @@
+using System;
+using System.Runtime.InteropServices;
+
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
+using WinRT.Interop;
 
 namespace ContextMenuManager.App
 {
@@ -22,6 +26,8 @@ namespace ContextMenuManager.App
             AppInstance.GetCurrent().Activated += (_, _) => _window.DispatcherQueue.TryEnqueue(BringToFront);
         }
 
+        // Window.Activate doesn't take the foreground from a visible window; SetForegroundWindow can,
+        // using the permission Program grants.
         private void BringToFront()
         {
             if (_window.AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized } presenter)
@@ -29,7 +35,10 @@ namespace ContextMenuManager.App
                 presenter.Restore();
             }
 
-            _window.Activate();
+            SetForegroundWindow(WindowNative.GetWindowHandle(_window));
         }
+
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hwnd);
     }
 }
