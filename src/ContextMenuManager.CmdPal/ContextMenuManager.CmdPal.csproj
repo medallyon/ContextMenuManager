@@ -16,7 +16,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Assets\*.png" />
+    <!-- Copied so a package registered straight from bin (Add-AppxPackage -Register) has them too. -->
+    <Content Include="Assets\*.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <!-- Lets Visual Studio offer MSIX deploy/debug before the packages are restored. -->

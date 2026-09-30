@@ -2,13 +2,13 @@
 // Licensed under the MIT license.
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 using ContextMenuManager.Core;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
+using Windows.Storage.Streams;
 
 namespace ContextMenuManager.CmdPal;
 
@@ -93,7 +93,13 @@ internal sealed partial class EntryItem : ListItem
         {
             if (ContextMenuRegistry.LoadIcon(Entry.IconSpec)?.Png is { } png)
             {
-                Icon = IconInfo.FromStream(new MemoryStream(png).AsRandomAccessStream());
+                // Command Palette reads the stream from its own process, which a wrapped MemoryStream can't serve.
+                var stream = new InMemoryRandomAccessStream();
+                var writer = new DataWriter(stream);
+                writer.WriteBytes(png);
+                writer.StoreAsync().AsTask().GetAwaiter().GetResult();
+                stream.Seek(0);
+                Icon = IconInfo.FromStream(stream);
             }
         }
         catch (Exception)
