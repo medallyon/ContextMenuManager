@@ -15,6 +15,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.Windows.AppLifecycle;
 using Windows.Graphics;
 using WinRT.Interop;
 
@@ -134,6 +135,8 @@ namespace ContextMenuManager.App
         // All-users entries need an elevated process; Windows asks for consent, then this window closes.
         private void RestartAsAdmin_Click(object sender, RoutedEventArgs e)
         {
+            // Released first, or the elevated process would redirect to this closing window (see Program).
+            AppInstance.GetCurrent().UnregisterKey();
             try
             {
                 Process.Start(new ProcessStartInfo(Environment.ProcessPath) { UseShellExecute = true, Verb = "runas" });
@@ -141,6 +144,7 @@ namespace ContextMenuManager.App
             catch (Win32Exception)
             {
                 // Consent prompt dismissed: keep running unelevated.
+                AppInstance.FindOrRegisterForKey(Program.InstanceKey);
                 return;
             }
 

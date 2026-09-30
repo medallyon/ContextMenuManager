@@ -12,6 +12,8 @@
     <!-- Unpackaged apps still need the MSIX tooling to put the .pri (strings, compiled XAML) into publish output. -->
     <EnableMsixTooling>true</EnableMsixTooling>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+    <!-- Program.Main redirects second launches to the running window. -->
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
