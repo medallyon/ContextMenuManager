@@ -81,7 +81,21 @@
                             Width="20"
                             Height="20"
                             IsActive="{x:Bind ViewModel.IsCmdPalBusy, Mode=OneWay}" />
-                        <ToggleSwitch IsEnabled="{x:Bind ViewModel.IsCmdPalIdle, Mode=OneWay}" IsOn="{x:Bind ViewModel.IsCmdPalExtensionInstalled, Mode=TwoWay}" />
+                        <Button
+                            x:Uid="CmdPalInstallButton"
+                            Click="{x:Bind ViewModel.InstallCmdPalExtension}"
+                            IsEnabled="{x:Bind ViewModel.IsCmdPalIdle, Mode=OneWay}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Visibility="{x:Bind ViewModel.IsCmdPalExtensionNotInstalled, Mode=OneWay}" />
+                        <Button
+                            x:Uid="CmdPalInstalledButton"
+                            IsEnabled="False"
+                            Visibility="{x:Bind ViewModel.IsCmdPalExtensionInstalled, Mode=OneWay}" />
+                        <Button
+                            x:Uid="CmdPalRemoveButton"
+                            Click="{x:Bind ViewModel.RemoveCmdPalExtension}"
+                            IsEnabled="{x:Bind ViewModel.IsCmdPalIdle, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsCmdPalExtensionInstalled, Mode=OneWay}" />
                     </StackPanel>
                 </tkcontrols:SettingsCard>
 

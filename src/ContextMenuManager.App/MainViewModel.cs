@@ -156,16 +156,16 @@ namespace ContextMenuManager.App
         public bool IsCmdPalExtensionInstalled
         {
             get => _isCmdPalExtensionInstalled;
-            set
+            private set
             {
-                if (value == _isCmdPalExtensionInstalled || _isCmdPalBusy)
+                if (Set(ref _isCmdPalExtensionInstalled, value))
                 {
-                    return;
+                    OnPropertyChanged(nameof(IsCmdPalExtensionNotInstalled));
                 }
-
-                _ = SetCmdPalExtensionAsync(value);
             }
         }
+
+        public bool IsCmdPalExtensionNotInstalled => !_isCmdPalExtensionInstalled;
 
         public bool IsCmdPalBusy => _isCmdPalBusy;
 
@@ -311,15 +311,25 @@ namespace ContextMenuManager.App
             }
 
             bool installed = CmdPalExtension.IsRegisteredFromHere;
-            if (Set(ref _isCmdPalExtensionInstalled, installed, nameof(IsCmdPalExtensionInstalled)) && !installed)
+            if (installed != IsCmdPalExtensionInstalled)
             {
+                IsCmdPalExtensionInstalled = installed;
                 CmdPalMessage = null;
             }
         }
 
+        public void InstallCmdPalExtension() => _ = SetCmdPalExtensionAsync(true);
+
+        public void RemoveCmdPalExtension() => _ = SetCmdPalExtensionAsync(false);
+
         // Never throws: the setter discards the task.
         private async Task SetCmdPalExtensionAsync(bool install)
         {
+            if (_isCmdPalBusy)
+            {
+                return;
+            }
+
             CmdPalMessage = null;
             CmdPalNeedsDeveloperMode = false;
 
@@ -328,7 +338,6 @@ namespace ContextMenuManager.App
             {
                 CmdPalNeedsDeveloperMode = true;
                 ShowCmdPalMessage(Display.GetString("CmdPalDeveloperModeRequired"), InfoBarSeverity.Warning);
-                OnPropertyChanged(nameof(IsCmdPalExtensionInstalled));
                 return;
             }
 
@@ -347,7 +356,7 @@ namespace ContextMenuManager.App
                     await CmdPalExtension.RemoveAsync();
                 }
 
-                _isCmdPalExtensionInstalled = install;
+                IsCmdPalExtensionInstalled = install;
             }
             catch (Exception ex)
             {
@@ -358,7 +367,6 @@ namespace ContextMenuManager.App
             _isCmdPalBusy = false;
             OnPropertyChanged(nameof(IsCmdPalBusy));
             OnPropertyChanged(nameof(IsCmdPalIdle));
-            OnPropertyChanged(nameof(IsCmdPalExtensionInstalled));
         }
 
         private void ShowCmdPalMessage(string message, InfoBarSeverity severity)

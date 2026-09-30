@@ -193,13 +193,22 @@
     <value>Toggle entries from PowerToys Command Palette. Needs Developer Mode.</value>
   </data>
   <data name="CmdPalDeveloperModeRequired" xml:space="preserve">
-    <value>Turn on Developer Mode in Windows Settings, then switch this on again.</value>
+    <value>Turn on Developer Mode in Windows Settings, then select Install again.</value>
+  </data>
+  <data name="CmdPalInstallButton.Content" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="CmdPalInstalledButton.Content" xml:space="preserve">
+    <value>Installed</value>
+  </data>
+  <data name="CmdPalRemoveButton.Content" xml:space="preserve">
+    <value>Remove</value>
   </data>
   <data name="CmdPalDeveloperModeLink.Content" xml:space="preserve">
     <value>Open developer settings</value>
   </data>
   <data name="CmdPalInstalled" xml:space="preserve">
-    <value>Installed. Run Reload in Command Palette, then search for "context". It runs from this folder, so switch it off before you move or update the app.</value>
+    <value>Installed. Run Reload in Command Palette, then search for "context". Remove it before you move or update Context Menu Manager.</value>
   </data>
   <data name="PreviewTargetCard.Header" xml:space="preserve">
     <value>Right-click on</value>

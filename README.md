@@ -109,14 +109,14 @@ gh attestation verify .\ContextMenuManager-win-x64.zip -R medallyon/ContextMenuM
 The extension ships inside the app zip. It needs [PowerToys](https://github.com/microsoft/PowerToys) with Command Palette, and **Developer Mode** (Settings > System > For developers), because the package is not signed yet.
 
 1. Turn on Developer Mode.
-2. In the app, switch on **Command Palette extension**.
+2. In the app, select **Install** on the **Command Palette extension** card.
 3. Open Command Palette, run **Reload**, then search for `context`. If "Context menu entries" is missing, check **Settings > Extensions** and switch Context Menu Manager on.
 
 <details>
 <summary>Good to know</summary>
 
-- The extension runs from the app's `CmdPal` folder. Switch it off before you move, update or delete the app, then switch it on again from the new copy.
-- Remove it by switching it off, or with `Get-AppxPackage Medallyon.ContextMenuManager.CmdPal | Remove-AppxPackage`.
+- The extension runs from the app's `CmdPal` folder. Remove it before you move, update or delete the app, then install it again from the new copy.
+- Remove it with the **Remove** button, or with `Get-AppxPackage Medallyon.ContextMenuManager.CmdPal | Remove-AppxPackage`.
 - "Open Context Menu Manager" starts the app the extension was installed from. A hand-registered build looks for `ContextMenuManager.exe` on your `PATH`, then opens the Releases page.
 
 </details>
