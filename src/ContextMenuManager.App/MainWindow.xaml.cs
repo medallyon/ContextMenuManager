@@ -39,6 +39,15 @@ namespace ContextMenuManager.App
                 presenter.PreferredMinimumWidth = (int)(MinWindowWidth * scale);
                 presenter.PreferredMinimumHeight = (int)(MinWindowHeight * scale);
             }
+
+            // The extension can also be removed or switched off outside the app.
+            Activated += (_, e) =>
+            {
+                if (e.WindowActivationState != WindowActivationState.Deactivated)
+                {
+                    ViewModel.RefreshCmdPalExtension();
+                }
+            };
         }
 
         private const double MaxContentWidth = 1100;

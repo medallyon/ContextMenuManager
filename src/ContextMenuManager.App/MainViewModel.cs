@@ -303,6 +303,20 @@ namespace ContextMenuManager.App
             RenderPreview();
         }
 
+        public void RefreshCmdPalExtension()
+        {
+            if (!IsCmdPalBundled || _isCmdPalBusy)
+            {
+                return;
+            }
+
+            bool installed = CmdPalExtension.IsRegisteredFromHere;
+            if (Set(ref _isCmdPalExtensionInstalled, installed, nameof(IsCmdPalExtensionInstalled)) && !installed)
+            {
+                CmdPalMessage = null;
+            }
+        }
+
         // Never throws: the setter discards the task.
         private async Task SetCmdPalExtensionAsync(bool install)
         {
