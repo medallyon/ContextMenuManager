@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,7 +15,21 @@ namespace ContextMenuManager.CmdPal;
 
 internal static class Icons
 {
-    public static IconInfo App { get; } = IconHelpers.FromRelativePath("Assets\\StoreLogo.png");
+    private static readonly byte[] AppPng = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Assets", "StoreLogo.png"));
+
+    // A new stream per use: every item that shows the icon reads its own copy.
+    public static IconInfo App => FromPng(AppPng);
+
+    // Command Palette reads the stream from its own process, which a wrapped MemoryStream can't serve.
+    public static IconInfo FromPng(byte[] png)
+    {
+        var stream = new InMemoryRandomAccessStream();
+        var writer = new DataWriter(stream);
+        writer.WriteBytes(png);
+        writer.StoreAsync().AsTask().GetAwaiter().GetResult();
+        stream.Seek(0);
+        return IconInfo.FromStream(stream);
+    }
 }
 
 // Every entry the app lists, filtered by Command Palette's own search box.
@@ -36,10 +51,10 @@ internal sealed partial class EntriesPage : ListPage
 
     private static IListItem[] Load()
     {
-        bool isElevated = ContextMenuRegistry.IsElevated;
-        var items = ContextMenuRegistry.Enumerate(isElevated)
+        // Enumerated as elevated so all-users entries stay toggleable: ToggleEntryCommand elevates per write.
+        var items = ContextMenuRegistry.Enumerate(isElevated: true)
             .OrderBy(e => e.SortKey ?? e.DisplayName, StringComparer.OrdinalIgnoreCase)
-            .Select(e => new EntryItem(e, isElevated))
+            .Select(e => new EntryItem(e))
             .ToArray();
 
         // Icon extraction loads third-party binaries, so it runs after the list is shown.
@@ -59,19 +74,12 @@ internal sealed partial class EntryItem : ListItem
 {
     private static readonly Tag OffTag = new("Off");
 
-    public EntryItem(ContextMenuEntry entry, bool isElevated)
+    public EntryItem(ContextMenuEntry entry)
     {
         Entry = entry;
         Title = entry.DisplayName;
         Subtitle = Describe(entry);
-        Command = entry switch
-        {
-            { IsToggleable: true } => new ToggleEntryCommand(this, confirmed: false),
-
-            // Not toggleable here only because the extension runs unelevated.
-            { Scope: ContextMenuEntryScope.AllUsers } when !isElevated => new OpenAppCommand(asAdmin: true),
-            _ => new NoOpCommand(),
-        };
+        Command = entry.IsToggleable ? new ToggleEntryCommand(this, confirmed: false) : new NoOpCommand();
         MoreCommands = [new CommandContextItem(new RestartExplorerCommand())];
         Refresh();
     }
@@ -93,13 +101,7 @@ internal sealed partial class EntryItem : ListItem
         {
             if (ContextMenuRegistry.LoadIcon(Entry.IconSpec)?.Png is { } png)
             {
-                // Command Palette reads the stream from its own process, which a wrapped MemoryStream can't serve.
-                var stream = new InMemoryRandomAccessStream();
-                var writer = new DataWriter(stream);
-                writer.WriteBytes(png);
-                writer.StoreAsync().AsTask().GetAwaiter().GetResult();
-                stream.Seek(0);
-                Icon = IconInfo.FromStream(stream);
+                Icon = Icons.FromPng(png);
             }
         }
         catch (Exception)

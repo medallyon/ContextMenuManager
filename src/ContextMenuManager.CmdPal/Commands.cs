@@ -38,11 +38,12 @@ internal sealed partial class ToggleEntryCommand : InvokableCommand
             });
         }
 
-        if (!ContextMenuRegistry.Toggle(entry, enable, ContextMenuRegistry.IsElevated))
+        if (!Write(entry, enable))
         {
             return CommandResult.ShowToast(new ToastArgs { Message = $"Couldn't change \"{entry.DisplayName}\".", Result = CommandResult.KeepOpen() });
         }
 
+        entry.IsEnabled = enable;
         _item.Refresh();
         string state = enable ? "on" : "off";
         return CommandResult.ShowToast(new ToastArgs
@@ -50,6 +51,14 @@ internal sealed partial class ToggleEntryCommand : InvokableCommand
             Message = $"Turned {state} \"{entry.DisplayName}\". Restart File Explorer to apply.",
             Result = CommandResult.KeepOpen(),
         });
+    }
+
+    private static bool Write(ContextMenuEntry entry, bool enable)
+    {
+        bool isElevated = ContextMenuRegistry.IsElevated;
+        return entry.Scope == ContextMenuEntryScope.AllUsers && !isElevated
+            ? ElevatedRegistry.ApplyToLocalMachine(ContextMenuRegistry.GetToggleWrites(entry, enable))
+            : ContextMenuRegistry.Toggle(entry, enable, isElevated);
     }
 }
 
@@ -74,12 +83,9 @@ internal sealed partial class OpenAppCommand : InvokableCommand
 
     private const string ReleasesUrl = "https://github.com/medallyon/ContextMenuManager/releases";
 
-    private readonly bool _asAdmin;
-
-    public OpenAppCommand(bool asAdmin)
+    public OpenAppCommand()
     {
-        _asAdmin = asAdmin;
-        Name = asAdmin ? "Open app as administrator" : "Open Context Menu Manager";
+        Name = "Open Context Menu Manager";
         Icon = Icons.App;
     }
 
@@ -89,7 +95,7 @@ internal sealed partial class OpenAppCommand : InvokableCommand
     {
         if (ShellHelpers.FileExistInPath(AppExe, out string path))
         {
-            ShellHelpers.OpenInShell(path, runAs: _asAdmin ? ShellHelpers.ShellRunAsType.Administrator : ShellHelpers.ShellRunAsType.None);
+            ShellHelpers.OpenInShell(path);
         }
         else
         {

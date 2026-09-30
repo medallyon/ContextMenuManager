@@ -23,7 +23,7 @@ public sealed partial class CommandsProvider : CommandProvider
                 Subtitle = "Turn Explorer right-click menu entries on and off",
             },
             new CommandItem(new RestartExplorerCommand()) { Subtitle = "Apply context menu changes" },
-            new CommandItem(new OpenAppCommand(asAdmin: false)) { Subtitle = "Menu preview and all-users entries" },
+            new CommandItem(new OpenAppCommand()) { Subtitle = "Full app with the live menu preview" },
         ];
     }
 

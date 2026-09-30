@@ -18,6 +18,11 @@ using Windows.Management.Deployment;
 
 namespace ContextMenuManager.Core
 {
+    // One string value set (Value non-null) or deleted (Value null). Name null is the key's default value.
+    // CreateKey false skips a missing key instead of creating it.
+    public sealed record RegistryWrite(bool CreateKey, string KeyPath, string Name, string Value);
+
+
     // Reads and writes the registry state behind Explorer's context menu. The registry IS the
     // persisted state - no settings file, no cache to keep in sync - so callers re-enumerate live.
     public static class ContextMenuRegistry
@@ -112,43 +117,21 @@ namespace ContextMenuManager.Core
 
             try
             {
-                if (entry.Kind == ContextMenuEntryKind.BlockedClsid)
+                foreach (var write in GetToggleWrites(entry, enable))
                 {
-                    using var blockedKey = baseKey.CreateSubKey(BlockedKeyPath, writable: true);
-                    foreach (var clsid in entry.Clsids)
+                    using var key = write.CreateKey ? baseKey.CreateSubKey(write.KeyPath, writable: true) : baseKey.OpenSubKey(write.KeyPath, writable: true);
+                    if (key == null)
                     {
-                        if (enable)
-                        {
-                            blockedKey.DeleteValue(clsid, throwOnMissingValue: false);
-                        }
-                        else
-                        {
-                            blockedKey.SetValue(clsid, entry.DisplayName ?? string.Empty, RegistryValueKind.String);
-                        }
+                        continue;
                     }
-                }
-                else
-                {
-                    foreach (var path in entry.KeyPaths)
-                    {
-                        using var key = baseKey.OpenSubKey($"Software\\Classes\\{path}", writable: true);
-                        if (key == null)
-                        {
-                            continue;
-                        }
 
-                        if (entry.Kind == ContextMenuEntryKind.HandlerValue)
-                        {
-                            key.SetValue(null, enable ? entry.OriginalClsidValue : DisabledValuePrefix + entry.OriginalClsidValue, RegistryValueKind.String);
-                        }
-                        else if (enable)
-                        {
-                            key.DeleteValue(LegacyDisableValue, throwOnMissingValue: false);
-                        }
-                        else
-                        {
-                            key.SetValue(LegacyDisableValue, string.Empty, RegistryValueKind.String);
-                        }
+                    if (write.Value == null)
+                    {
+                        key.DeleteValue(write.Name, throwOnMissingValue: false);
+                    }
+                    else
+                    {
+                        key.SetValue(write.Name, write.Value, RegistryValueKind.String);
                     }
                 }
             }
@@ -160,6 +143,24 @@ namespace ContextMenuManager.Core
 
             entry.IsEnabled = enable;
             return true;
+        }
+
+        // The value writes behind a toggle, relative to the entry's hive, so a process that can't write
+        // that hive itself (an unelevated one, for all-users entries) can hand them to an elevated one.
+        public static List<RegistryWrite> GetToggleWrites(ContextMenuEntry entry, bool enable)
+        {
+            if (entry.Kind == ContextMenuEntryKind.BlockedClsid)
+            {
+                return entry.Clsids
+                    .Select(clsid => new RegistryWrite(CreateKey: true, BlockedKeyPath, clsid, enable ? null : entry.DisplayName ?? string.Empty))
+                    .ToList();
+            }
+
+            return entry.KeyPaths
+                .Select(path => entry.Kind == ContextMenuEntryKind.HandlerValue
+                    ? new RegistryWrite(CreateKey: false, $"Software\\Classes\\{path}", null, enable ? entry.OriginalClsidValue : DisabledValuePrefix + entry.OriginalClsidValue)
+                    : new RegistryWrite(CreateKey: false, $"Software\\Classes\\{path}", LegacyDisableValue, enable ? null : string.Empty))
+                .ToList();
         }
 
         public static void RestartExplorer()
