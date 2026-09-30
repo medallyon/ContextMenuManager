@@ -129,6 +129,17 @@
                                     <tkcontrols:SettingsCard x:Uid="UpdateCheckCard" HeaderIcon="{ui:FontIcon Glyph=&#xE895;}">
                                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsUpdateCheckEnabled, Mode=TwoWay}" />
                                     </tkcontrols:SettingsCard>
+
+                                    <tkcontrols:SettingsCard
+                                        x:Uid="AboutCard"
+                                        Margin="0,12,0,0"
+                                        Description="{x:Bind ViewModel.AboutDescription}"
+                                        HeaderIcon="{ui:FontIcon Glyph=&#xE946;}">
+                                        <StackPanel>
+                                            <HyperlinkButton x:Uid="AboutRepoLink" NavigateUri="https://github.com/medallyon/ContextMenuManager" />
+                                            <HyperlinkButton x:Uid="AboutFeedbackLink" NavigateUri="https://github.com/medallyon/ContextMenuManager/issues/new/choose" />
+                                        </StackPanel>
+                                    </tkcontrols:SettingsCard>
                                 </StackPanel>
                             </Flyout>
                         </Button.Flyout>

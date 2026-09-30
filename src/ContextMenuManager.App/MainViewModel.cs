@@ -251,6 +251,8 @@ namespace ContextMenuManager.App
 
         private static Version CurrentVersion { get; } = ThreePart(Assembly.GetEntryAssembly()?.GetName().Version ?? new Version(0, 0));
 
+        public string AboutDescription { get; } = string.Format(Display.GetString("AboutCard_Description"), CurrentVersion.ToString(3));
+
         public bool CanGoBackToModernMenu => _showClassicLayer && !_isClassicMenuDefault;
 
         public ContextMenuPreviewItem SelectedPreviewItem

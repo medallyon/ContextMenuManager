@@ -222,6 +222,18 @@
   <data name="UpdateCheckCard.Description" xml:space="preserve">
     <value>Asks GitHub for the latest release when the app starts.</value>
   </data>
+  <data name="AboutCard.Header" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AboutCard_Description" xml:space="preserve">
+    <value>Context Menu Manager {0}. Shows and toggles what's in your File Explorer right-click menu. Free and open source under the MIT license.</value>
+  </data>
+  <data name="AboutRepoLink.Content" xml:space="preserve">
+    <value>View on GitHub</value>
+  </data>
+  <data name="AboutFeedbackLink.Content" xml:space="preserve">
+    <value>Submit feedback</value>
+  </data>
   <data name="UpdateNotice.Title" xml:space="preserve">
     <value>Update available</value>
   </data>
