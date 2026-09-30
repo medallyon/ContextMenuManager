@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -40,11 +41,17 @@ namespace ContextMenuManager.App
         private bool _isCapturing;
         private string _captureError;
         private ContextMenuPreviewItem _selectedPreviewItem;
+        private bool _isUpdateCheckEnabled = UpdateCheck.IsEnabled;
+        private Version _availableVersion;
 
         public MainViewModel()
         {
             _isCmdPalExtensionInstalled = IsCmdPalBundled && CmdPalExtension.IsRegisteredFromHere;
             LoadEntries();
+            if (_isUpdateCheckEnabled)
+            {
+                _ = CheckForUpdateAsync();
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -196,6 +203,53 @@ namespace ContextMenuManager.App
             get => _cmdPalMessageSeverity;
             private set => Set(ref _cmdPalMessageSeverity, value);
         }
+
+        public bool IsUpdateCheckEnabled
+        {
+            get => _isUpdateCheckEnabled;
+            set
+            {
+                if (value == _isUpdateCheckEnabled)
+                {
+                    return;
+                }
+
+                if (!UpdateCheck.SetEnabled(value))
+                {
+                    OnPropertyChanged();
+                    return;
+                }
+
+                _isUpdateCheckEnabled = value;
+                OnPropertyChanged();
+                AvailableVersion = null;
+                if (value)
+                {
+                    _ = CheckForUpdateAsync();
+                }
+            }
+        }
+
+        public Version AvailableVersion
+        {
+            get => _availableVersion;
+            private set
+            {
+                if (Set(ref _availableVersion, value))
+                {
+                    OnPropertyChanged(nameof(HasUpdate));
+                    OnPropertyChanged(nameof(UpdateMessage));
+                }
+            }
+        }
+
+        public bool HasUpdate => _availableVersion != null;
+
+        public string UpdateMessage => _availableVersion == null
+            ? null
+            : string.Format(Display.GetString("UpdateNotice_Message"), _availableVersion.ToString(3), CurrentVersion.ToString(3));
+
+        private static Version CurrentVersion { get; } = ThreePart(Assembly.GetEntryAssembly()?.GetName().Version ?? new Version(0, 0));
 
         public bool CanGoBackToModernMenu => _showClassicLayer && !_isClassicMenuDefault;
 
@@ -368,6 +422,27 @@ namespace ContextMenuManager.App
             OnPropertyChanged(nameof(IsCmdPalBusy));
             OnPropertyChanged(nameof(IsCmdPalIdle));
         }
+
+        // Never throws: callers discard the task. Offline or rate-limited just means no notice.
+        private async Task CheckForUpdateAsync()
+        {
+            try
+            {
+                var latest = await UpdateCheck.GetLatestVersionAsync();
+                if (_isUpdateCheckEnabled && latest != null)
+                {
+                    var normalized = ThreePart(latest);
+                    AvailableVersion = normalized > CurrentVersion ? normalized : null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"ContextMenuManager: update check failed: {ex.Message}");
+            }
+        }
+
+        // Tags are three-part (v1.2.3), the assembly version four-part, and 1.2.3.0 > 1.2.3 in Version's ordering.
+        private static Version ThreePart(Version v) => new Version(v.Major, v.Minor, Math.Max(v.Build, 0));
 
         private void ShowCmdPalMessage(string message, InfoBarSeverity severity)
         {

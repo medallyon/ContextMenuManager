@@ -93,6 +93,8 @@ The desktop menu inside Command Palette, and the same menu as Windows shows it o
 
 Download the zip for your machine (`win-x64` or `win-arm64`) from [Releases](https://github.com/medallyon/ContextMenuManager/releases), extract it and run `ContextMenuManager.exe`.
 
+On launch the app asks GitHub for the latest release and shows a link when a newer one is out. Switch this off with **Check for updates**.
+
 <details>
 <summary>Verify the download</summary>
 

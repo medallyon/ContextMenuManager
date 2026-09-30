@@ -61,6 +61,17 @@
                     Margin="0,0,0,16"
                     Style="{StaticResource TitleTextBlockStyle}" />
 
+                <InfoBar
+                    x:Uid="UpdateNotice"
+                    IsClosable="True"
+                    IsOpen="{x:Bind ViewModel.HasUpdate, Mode=OneWay}"
+                    Message="{x:Bind ViewModel.UpdateMessage, Mode=OneWay}"
+                    Severity="Informational">
+                    <InfoBar.ActionButton>
+                        <HyperlinkButton x:Uid="UpdateNoticeLink" NavigateUri="https://github.com/medallyon/ContextMenuManager/releases/latest" />
+                    </InfoBar.ActionButton>
+                </InfoBar>
+
                 <tkcontrols:SettingsCard
                     x:Uid="Windows11MenuCard"
                     HeaderIcon="{ui:FontIcon Glyph=&#xE8A7;}"
@@ -111,6 +122,10 @@
                             Visibility="{x:Bind ViewModel.CmdPalNeedsDeveloperMode, Mode=OneWay}" />
                     </InfoBar.ActionButton>
                 </InfoBar>
+
+                <tkcontrols:SettingsCard x:Uid="UpdateCheckCard" HeaderIcon="{ui:FontIcon Glyph=&#xE895;}">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsUpdateCheckEnabled, Mode=TwoWay}" />
+                </tkcontrols:SettingsCard>
 
                 <TextBlock
                     x:Uid="PreviewGroupHeader"

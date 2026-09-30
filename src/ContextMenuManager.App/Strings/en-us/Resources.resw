@@ -210,6 +210,21 @@
   <data name="CmdPalInstalled" xml:space="preserve">
     <value>Installed. Run Reload in Command Palette, then search for "context". Remove it before you move or update Context Menu Manager.</value>
   </data>
+  <data name="UpdateCheckCard.Header" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="UpdateCheckCard.Description" xml:space="preserve">
+    <value>Asks GitHub for the latest release when the app starts.</value>
+  </data>
+  <data name="UpdateNotice.Title" xml:space="preserve">
+    <value>Update available</value>
+  </data>
+  <data name="UpdateNotice_Message" xml:space="preserve">
+    <value>Version {0} is available. You have {1}.</value>
+  </data>
+  <data name="UpdateNoticeLink.Content" xml:space="preserve">
+    <value>Open release page</value>
+  </data>
   <data name="PreviewTargetCard.Header" xml:space="preserve">
     <value>Right-click on</value>
   </data>
