@@ -37,6 +37,13 @@
   <!-- Ships the Command Palette extension's loose package in publish\CmdPal, where CmdPalExtension
        registers it from. Publish only, so a debug build doesn't lock files of a registered extension. -->
   <Target Name="PublishCmdPalExtension" AfterTargets="Publish">
+    <!-- Not a ProjectReference, so the App's restore skips it. The extra property gives the restore its
+         own evaluation, so Build below re-evaluates and sees the restored assets. -->
+    <MSBuild
+      Projects="..\ContextMenuManager.CmdPal\ContextMenuManager.CmdPal.csproj"
+      Targets="Restore"
+      Properties="Configuration=$(Configuration);Platform=$(Platform);RuntimeIdentifier=$(RuntimeIdentifier);CmdPalRestore=true"
+      RemoveProperties="PublishDir;_CommandLineDefinedOutputPath" />
     <MSBuild
       Projects="..\ContextMenuManager.CmdPal\ContextMenuManager.CmdPal.csproj"
       Targets="Build"
