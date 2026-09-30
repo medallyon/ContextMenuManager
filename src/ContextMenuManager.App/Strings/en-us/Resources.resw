@@ -177,6 +177,15 @@
   <data name="Windows11MenuCard.Description" xml:space="preserve">
     <value>Turn off to show the full Windows 10 style menu on right-click, without &quot;Show more options&quot;. Applies after Explorer restarts.</value>
   </data>
+  <data name="DesktopShortcutCard.Header" xml:space="preserve">
+    <value>Add &quot;Manage Context Menu&quot; to the desktop menu</value>
+  </data>
+  <data name="DesktopShortcutCard.Description" xml:space="preserve">
+    <value>Adds an item at the bottom of the desktop right-click menu that opens Context Menu Manager. On the Windows 11 menu it appears under &quot;Show more options&quot;.</value>
+  </data>
+  <data name="DesktopShortcutText" xml:space="preserve">
+    <value>Manage Context Menu</value>
+  </data>
   <data name="PreviewTargetCard.Header" xml:space="preserve">
     <value>Right-click on</value>
   </data>

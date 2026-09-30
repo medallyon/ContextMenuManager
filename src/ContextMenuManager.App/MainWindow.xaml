@@ -68,6 +68,10 @@
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsWindows11ContextMenu, Mode=TwoWay}" />
                 </tkcontrols:SettingsCard>
 
+                <tkcontrols:SettingsCard x:Uid="DesktopShortcutCard" HeaderIcon="{ui:FontIcon Glyph=&#xE8FC;}">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsDesktopShortcutInstalled, Mode=TwoWay}" />
+                </tkcontrols:SettingsCard>
+
                 <TextBlock
                     x:Uid="PreviewGroupHeader"
                     Margin="1,28,0,6"

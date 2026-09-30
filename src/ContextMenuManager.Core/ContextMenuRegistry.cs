@@ -49,6 +49,8 @@ namespace ContextMenuManager.Core
         // Present when the user restored the Windows 10 menu as the default right-click menu.
         private const string ClassicMenuRestoreKey = "Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\\InprocServer32";
 
+        private const string DesktopShortcutKey = "Software\\Classes\\DesktopBackground\\Shell\\ContextMenuManager";
+
         // Nested submenus deeper than this are not walked.
         private const int MaxSubmenuDepth = 3;
 
@@ -214,6 +216,46 @@ namespace ContextMenuManager.Core
             catch (Exception ex)
             {
                 Trace.WriteLine($"ContextMenuManager: failed to switch the default context menu: {ex.Message}");
+                return false;
+            }
+        }
+
+        public static bool IsDesktopShortcutInstalled()
+        {
+            try
+            {
+                using var key = Registry.CurrentUser.OpenSubKey(DesktopShortcutKey, writable: false);
+                return key != null;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        // A per-user classic verb on the desktop background. Windows 11 lists classic verbs only
+        // under "Show more options", so there it appears in the classic menu, not the modern one.
+        public static bool SetDesktopShortcut(bool install, string text, string exePath)
+        {
+            try
+            {
+                if (!install)
+                {
+                    Registry.CurrentUser.DeleteSubKeyTree(DesktopShortcutKey, throwOnMissingSubKey: false);
+                    return true;
+                }
+
+                using var key = Registry.CurrentUser.CreateSubKey(DesktopShortcutKey, writable: true);
+                key.SetValue("MUIVerb", text, RegistryValueKind.String);
+                key.SetValue("Icon", exePath, RegistryValueKind.String);
+                key.SetValue("Position", "Bottom", RegistryValueKind.String);
+                using var command = key.CreateSubKey("command", writable: true);
+                command.SetValue(null, $"\"{exePath}\"", RegistryValueKind.String);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"ContextMenuManager: failed to change the desktop shortcut: {ex.Message}");
                 return false;
             }
         }

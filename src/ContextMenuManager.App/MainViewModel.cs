@@ -29,6 +29,7 @@ namespace ContextMenuManager.App
         private ContextMenuPreviewTarget _previewTarget = ContextMenuPreviewTarget.Desktop;
         private bool _needsExplorerRestart;
         private bool _isClassicMenuDefault;
+        private bool _isDesktopShortcutInstalled;
         private bool _showClassicLayer;
         private bool _isCapturing;
         private string _captureError;
@@ -119,6 +120,29 @@ namespace ContextMenuManager.App
             }
         }
 
+        public bool IsDesktopShortcutInstalled
+        {
+            get => _isDesktopShortcutInstalled;
+            set
+            {
+                if (value == _isDesktopShortcutInstalled)
+                {
+                    return;
+                }
+
+                if (!ContextMenuRegistry.SetDesktopShortcut(value, Display.GetString("DesktopShortcutText"), Environment.ProcessPath))
+                {
+                    OnPropertyChanged();
+                    return;
+                }
+
+                // Reload so the verb shows up in the Desktop capture, keeping an earlier toggle's restart prompt.
+                bool needsRestart = NeedsExplorerRestart;
+                LoadEntries();
+                NeedsExplorerRestart = needsRestart;
+            }
+        }
+
         public bool CanGoBackToModernMenu => _showClassicLayer && !_isClassicMenuDefault;
 
         public ContextMenuPreviewItem SelectedPreviewItem
@@ -184,7 +208,9 @@ namespace ContextMenuManager.App
             // Every cached item points at an old entry object.
             _captures.Clear();
             _isClassicMenuDefault = ContextMenuRegistry.IsClassicMenuDefault();
+            _isDesktopShortcutInstalled = ContextMenuRegistry.IsDesktopShortcutInstalled();
             OnPropertyChanged(nameof(IsWindows11ContextMenu));
+            OnPropertyChanged(nameof(IsDesktopShortcutInstalled));
             SelectedPreviewItem = null;
             _ = LoadPreviewAsync();
             LoadIcons();
