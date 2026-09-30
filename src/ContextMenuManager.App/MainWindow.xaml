@@ -56,10 +56,84 @@
                 Margin="24,8,24,24"
                 HorizontalAlignment="Center"
                 Spacing="4">
-                <TextBlock
-                    x:Uid="AppTitle"
-                    Margin="0,0,0,16"
-                    Style="{StaticResource TitleTextBlockStyle}" />
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="AppTitle" Style="{StaticResource TitleTextBlockStyle}" />
+                    <Button
+                        x:Uid="SettingsButton"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Content="{ui:FontIcon Glyph=&#xE713;}">
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                                        <Setter Property="MaxWidth" Value="560" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+                                <StackPanel Width="500" Spacing="4">
+                                    <tkcontrols:SettingsCard
+                                        x:Uid="Windows11MenuCard"
+                                        HeaderIcon="{ui:FontIcon Glyph=&#xE8A7;}"
+                                        Visibility="{x:Bind ViewModel.IsWindows11}">
+                                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsWindows11ContextMenu, Mode=TwoWay}" />
+                                    </tkcontrols:SettingsCard>
+
+                                    <tkcontrols:SettingsCard x:Uid="DesktopShortcutCard" HeaderIcon="{ui:FontIcon Glyph=&#xE8FC;}">
+                                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsDesktopShortcutInstalled, Mode=TwoWay}" />
+                                    </tkcontrols:SettingsCard>
+
+                                    <tkcontrols:SettingsCard
+                                        x:Uid="CmdPalCard"
+                                        HeaderIcon="{ui:FontIcon Glyph=&#xE721;}"
+                                        Visibility="{x:Bind ViewModel.IsCmdPalBundled}">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <ProgressRing
+                                                Width="20"
+                                                Height="20"
+                                                IsActive="{x:Bind ViewModel.IsCmdPalBusy, Mode=OneWay}" />
+                                            <Button
+                                                x:Uid="CmdPalInstallButton"
+                                                Click="{x:Bind ViewModel.InstallCmdPalExtension}"
+                                                IsEnabled="{x:Bind ViewModel.IsCmdPalIdle, Mode=OneWay}"
+                                                Style="{StaticResource AccentButtonStyle}"
+                                                Visibility="{x:Bind ViewModel.IsCmdPalExtensionNotInstalled, Mode=OneWay}" />
+                                            <Button
+                                                x:Uid="CmdPalInstalledButton"
+                                                IsEnabled="False"
+                                                Visibility="{x:Bind ViewModel.IsCmdPalExtensionInstalled, Mode=OneWay}" />
+                                            <Button
+                                                x:Uid="CmdPalRemoveButton"
+                                                Click="{x:Bind ViewModel.RemoveCmdPalExtension}"
+                                                IsEnabled="{x:Bind ViewModel.IsCmdPalIdle, Mode=OneWay}"
+                                                Visibility="{x:Bind ViewModel.IsCmdPalExtensionInstalled, Mode=OneWay}" />
+                                        </StackPanel>
+                                    </tkcontrols:SettingsCard>
+
+                                    <InfoBar
+                                        IsClosable="True"
+                                        IsOpen="{x:Bind ViewModel.HasCmdPalMessage, Mode=OneWay}"
+                                        Message="{x:Bind ViewModel.CmdPalMessage, Mode=OneWay}"
+                                        Severity="{x:Bind ViewModel.CmdPalMessageSeverity, Mode=OneWay}">
+                                        <InfoBar.ActionButton>
+                                            <HyperlinkButton
+                                                x:Uid="CmdPalDeveloperModeLink"
+                                                NavigateUri="ms-settings:developers"
+                                                Visibility="{x:Bind ViewModel.CmdPalNeedsDeveloperMode, Mode=OneWay}" />
+                                        </InfoBar.ActionButton>
+                                    </InfoBar>
+
+                                    <tkcontrols:SettingsCard x:Uid="UpdateCheckCard" HeaderIcon="{ui:FontIcon Glyph=&#xE895;}">
+                                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsUpdateCheckEnabled, Mode=TwoWay}" />
+                                    </tkcontrols:SettingsCard>
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </Grid>
 
                 <InfoBar
                     x:Uid="UpdateNotice"
@@ -72,64 +146,9 @@
                     </InfoBar.ActionButton>
                 </InfoBar>
 
-                <tkcontrols:SettingsCard
-                    x:Uid="Windows11MenuCard"
-                    HeaderIcon="{ui:FontIcon Glyph=&#xE8A7;}"
-                    Visibility="{x:Bind ViewModel.IsWindows11}">
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsWindows11ContextMenu, Mode=TwoWay}" />
-                </tkcontrols:SettingsCard>
-
-                <tkcontrols:SettingsCard x:Uid="DesktopShortcutCard" HeaderIcon="{ui:FontIcon Glyph=&#xE8FC;}">
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsDesktopShortcutInstalled, Mode=TwoWay}" />
-                </tkcontrols:SettingsCard>
-
-                <tkcontrols:SettingsCard
-                    x:Uid="CmdPalCard"
-                    HeaderIcon="{ui:FontIcon Glyph=&#xE721;}"
-                    Visibility="{x:Bind ViewModel.IsCmdPalBundled}">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <ProgressRing
-                            Width="20"
-                            Height="20"
-                            IsActive="{x:Bind ViewModel.IsCmdPalBusy, Mode=OneWay}" />
-                        <Button
-                            x:Uid="CmdPalInstallButton"
-                            Click="{x:Bind ViewModel.InstallCmdPalExtension}"
-                            IsEnabled="{x:Bind ViewModel.IsCmdPalIdle, Mode=OneWay}"
-                            Style="{StaticResource AccentButtonStyle}"
-                            Visibility="{x:Bind ViewModel.IsCmdPalExtensionNotInstalled, Mode=OneWay}" />
-                        <Button
-                            x:Uid="CmdPalInstalledButton"
-                            IsEnabled="False"
-                            Visibility="{x:Bind ViewModel.IsCmdPalExtensionInstalled, Mode=OneWay}" />
-                        <Button
-                            x:Uid="CmdPalRemoveButton"
-                            Click="{x:Bind ViewModel.RemoveCmdPalExtension}"
-                            IsEnabled="{x:Bind ViewModel.IsCmdPalIdle, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsCmdPalExtensionInstalled, Mode=OneWay}" />
-                    </StackPanel>
-                </tkcontrols:SettingsCard>
-
-                <InfoBar
-                    IsClosable="True"
-                    IsOpen="{x:Bind ViewModel.HasCmdPalMessage, Mode=OneWay}"
-                    Message="{x:Bind ViewModel.CmdPalMessage, Mode=OneWay}"
-                    Severity="{x:Bind ViewModel.CmdPalMessageSeverity, Mode=OneWay}">
-                    <InfoBar.ActionButton>
-                        <HyperlinkButton
-                            x:Uid="CmdPalDeveloperModeLink"
-                            NavigateUri="ms-settings:developers"
-                            Visibility="{x:Bind ViewModel.CmdPalNeedsDeveloperMode, Mode=OneWay}" />
-                    </InfoBar.ActionButton>
-                </InfoBar>
-
-                <tkcontrols:SettingsCard x:Uid="UpdateCheckCard" HeaderIcon="{ui:FontIcon Glyph=&#xE895;}">
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsUpdateCheckEnabled, Mode=TwoWay}" />
-                </tkcontrols:SettingsCard>
-
                 <TextBlock
                     x:Uid="PreviewGroupHeader"
-                    Margin="1,28,0,6"
+                    Margin="1,8,0,6"
                     Style="{StaticResource BodyStrongTextBlockStyle}" />
 
                 <InfoBar

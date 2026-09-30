@@ -210,6 +210,12 @@
   <data name="CmdPalInstalled" xml:space="preserve">
     <value>Installed. Run Reload in Command Palette, then search for "context". Remove it before you move or update Context Menu Manager.</value>
   </data>
+  <data name="SettingsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="UpdateCheckCard.Header" xml:space="preserve">
     <value>Check for updates</value>
   </data>

@@ -93,7 +93,7 @@ The desktop menu inside Command Palette, and the same menu as Windows shows it o
 
 Download the zip for your machine (`win-x64` or `win-arm64`) from [Releases](https://github.com/medallyon/ContextMenuManager/releases), extract it and run `ContextMenuManager.exe`.
 
-On launch the app asks GitHub for the latest release and shows a link when a newer one is out. Switch this off with **Check for updates**.
+On launch the app asks GitHub for the latest release and shows a link when a newer one is out. Switch this off with **Check for updates** under the gear button.
 
 <details>
 <summary>Verify the download</summary>
@@ -111,7 +111,7 @@ gh attestation verify .\ContextMenuManager-win-x64.zip -R medallyon/ContextMenuM
 The extension ships inside the app zip. It needs [PowerToys](https://github.com/microsoft/PowerToys) with Command Palette, and **Developer Mode** (Settings > System > For developers), because the package is not signed yet.
 
 1. Turn on Developer Mode.
-2. In the app, select **Install** on the **Command Palette extension** card.
+2. In the app, open the gear button and select **Install** on the **Command Palette extension** card.
 3. Open Command Palette, run **Reload**, then search for `context`. If "Context menu entries" is missing, check **Settings > Extensions** and switch Context Menu Manager on.
 
 <details>
