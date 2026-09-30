@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 using ContextMenuManager.Core;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml.Controls;
 
 namespace ContextMenuManager.App
 {
@@ -31,12 +32,18 @@ namespace ContextMenuManager.App
         private bool _isClassicMenuDefault;
         private bool _isDesktopShortcutInstalled;
         private bool _showClassicLayer;
+        private bool _isCmdPalExtensionInstalled;
+        private bool _isCmdPalBusy;
+        private bool _cmdPalNeedsDeveloperMode;
+        private string _cmdPalMessage;
+        private InfoBarSeverity _cmdPalMessageSeverity;
         private bool _isCapturing;
         private string _captureError;
         private ContextMenuPreviewItem _selectedPreviewItem;
 
         public MainViewModel()
         {
+            _isCmdPalExtensionInstalled = IsCmdPalBundled && CmdPalExtension.IsRegisteredFromHere;
             LoadEntries();
         }
 
@@ -143,6 +150,53 @@ namespace ContextMenuManager.App
             }
         }
 
+        // Only published builds carry the extension; a plain build of the app has no CmdPal folder.
+        public bool IsCmdPalBundled { get; } = CmdPalExtension.IsBundled;
+
+        public bool IsCmdPalExtensionInstalled
+        {
+            get => _isCmdPalExtensionInstalled;
+            set
+            {
+                if (value == _isCmdPalExtensionInstalled || _isCmdPalBusy)
+                {
+                    return;
+                }
+
+                _ = SetCmdPalExtensionAsync(value);
+            }
+        }
+
+        public bool IsCmdPalBusy => _isCmdPalBusy;
+
+        public bool IsCmdPalIdle => !_isCmdPalBusy;
+
+        public bool CmdPalNeedsDeveloperMode
+        {
+            get => _cmdPalNeedsDeveloperMode;
+            private set => Set(ref _cmdPalNeedsDeveloperMode, value);
+        }
+
+        public string CmdPalMessage
+        {
+            get => _cmdPalMessage;
+            private set
+            {
+                if (Set(ref _cmdPalMessage, value))
+                {
+                    OnPropertyChanged(nameof(HasCmdPalMessage));
+                }
+            }
+        }
+
+        public bool HasCmdPalMessage => !string.IsNullOrEmpty(CmdPalMessage);
+
+        public InfoBarSeverity CmdPalMessageSeverity
+        {
+            get => _cmdPalMessageSeverity;
+            private set => Set(ref _cmdPalMessageSeverity, value);
+        }
+
         public bool CanGoBackToModernMenu => _showClassicLayer && !_isClassicMenuDefault;
 
         public ContextMenuPreviewItem SelectedPreviewItem
@@ -247,6 +301,56 @@ namespace ContextMenuManager.App
         {
             _showClassicLayer = false;
             RenderPreview();
+        }
+
+        // Never throws: the setter discards the task.
+        private async Task SetCmdPalExtensionAsync(bool install)
+        {
+            CmdPalMessage = null;
+            CmdPalNeedsDeveloperMode = false;
+
+            // Read on every attempt: the user may have just switched it on in Settings.
+            if (install && !CmdPalExtension.IsDeveloperModeOn)
+            {
+                CmdPalNeedsDeveloperMode = true;
+                ShowCmdPalMessage(Display.GetString("CmdPalDeveloperModeRequired"), InfoBarSeverity.Warning);
+                OnPropertyChanged(nameof(IsCmdPalExtensionInstalled));
+                return;
+            }
+
+            _isCmdPalBusy = true;
+            OnPropertyChanged(nameof(IsCmdPalBusy));
+            OnPropertyChanged(nameof(IsCmdPalIdle));
+            try
+            {
+                if (install)
+                {
+                    await CmdPalExtension.RegisterAsync();
+                    ShowCmdPalMessage(Display.GetString("CmdPalInstalled"), InfoBarSeverity.Success);
+                }
+                else
+                {
+                    await CmdPalExtension.RemoveAsync();
+                }
+
+                _isCmdPalExtensionInstalled = install;
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"ContextMenuManager: Command Palette extension change failed: {ex}");
+                ShowCmdPalMessage(ex.Message, InfoBarSeverity.Error);
+            }
+
+            _isCmdPalBusy = false;
+            OnPropertyChanged(nameof(IsCmdPalBusy));
+            OnPropertyChanged(nameof(IsCmdPalIdle));
+            OnPropertyChanged(nameof(IsCmdPalExtensionInstalled));
+        }
+
+        private void ShowCmdPalMessage(string message, InfoBarSeverity severity)
+        {
+            CmdPalMessageSeverity = severity;
+            CmdPalMessage = message;
         }
 
         // Extraction touches the disk and third-party binaries, so it runs off the UI thread; the

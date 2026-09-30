@@ -106,27 +106,17 @@ gh attestation verify .\ContextMenuManager-win-x64.zip -R medallyon/ContextMenuM
 
 ### The Command Palette extension
 
-A prebuilt package is not published yet, because installing an MSIX normally needs a trusted signature. Until then, build it and register it from its output folder. This needs the .NET 10 SDK, [PowerToys](https://github.com/microsoft/PowerToys) with Command Palette, and **Developer Mode** (Settings > System > For developers).
+The extension ships inside the app zip. It needs [PowerToys](https://github.com/microsoft/PowerToys) with Command Palette, and **Developer Mode** (Settings > System > For developers), because the package is not signed yet.
 
-1. Build it (use `-p:Platform=ARM64` and the `win-arm64` folder on ARM):
-
-   ```powershell
-   dotnet build src/ContextMenuManager.CmdPal -c Release -p:Platform=x64
-   ```
-
-2. Register the build output as a package:
-
-   ```powershell
-   Add-AppxPackage -Register src\ContextMenuManager.CmdPal\bin\x64\Release\net10.0-windows10.0.26100.0\win-x64\AppxManifest.xml
-   ```
-
+1. Turn on Developer Mode.
+2. In the app, switch on **Command Palette extension**.
 3. Open Command Palette, run **Reload**, then search for `context`. If "Context menu entries" is missing, check **Settings > Extensions** and switch Context Menu Manager on.
 
 <details>
 <summary>Good to know</summary>
 
-- Registration points at the build folder, so don't move or delete it while the extension is installed. Rebuilding needs the extension closed, so remove it first if the build reports files in use.
-- Remove it with `Get-AppxPackage Medallyon.ContextMenuManager.CmdPal | Remove-AppxPackage`.
+- The extension runs from the app's `CmdPal` folder. Switch it off before you move, update or delete the app, then switch it on again from the new copy.
+- Remove it by switching it off, or with `Get-AppxPackage Medallyon.ContextMenuManager.CmdPal | Remove-AppxPackage`.
 - "Open Context Menu Manager" finds `ContextMenuManager.exe` on your `PATH`, and opens the Releases page if it can't.
 
 </details>
@@ -167,7 +157,7 @@ Needs the .NET 10 SDK.
 dotnet publish src/ContextMenuManager.App -c Release -r win-x64 -p:Platform=x64 -o publish
 ```
 
-Use `win-arm64` and `-p:Platform=ARM64` for ARM. The output is self-contained: copy the folder and run `ContextMenuManager.exe`.
+Use `win-arm64` and `-p:Platform=ARM64` for ARM. The output is self-contained: copy the folder and run `ContextMenuManager.exe`. Publishing also builds the Command Palette extension into `publish\CmdPal`.
 
 ## Project layout
 

@@ -186,6 +186,21 @@
   <data name="DesktopShortcutText" xml:space="preserve">
     <value>Manage Context Menu</value>
   </data>
+  <data name="CmdPalCard.Header" xml:space="preserve">
+    <value>Command Palette extension</value>
+  </data>
+  <data name="CmdPalCard.Description" xml:space="preserve">
+    <value>Toggle entries from PowerToys Command Palette. Needs Developer Mode. The extension runs from this app's folder, so turn it off before you move, update or delete the app.</value>
+  </data>
+  <data name="CmdPalDeveloperModeRequired" xml:space="preserve">
+    <value>Turn on Developer Mode in Windows Settings, then switch this on again.</value>
+  </data>
+  <data name="CmdPalDeveloperModeLink.Content" xml:space="preserve">
+    <value>Open developer settings</value>
+  </data>
+  <data name="CmdPalInstalled" xml:space="preserve">
+    <value>Installed. Open Command Palette, run Reload, then search for "context".</value>
+  </data>
   <data name="PreviewTargetCard.Header" xml:space="preserve">
     <value>Right-click on</value>
   </data>

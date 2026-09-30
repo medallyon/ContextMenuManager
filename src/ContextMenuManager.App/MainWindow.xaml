@@ -72,6 +72,32 @@
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsDesktopShortcutInstalled, Mode=TwoWay}" />
                 </tkcontrols:SettingsCard>
 
+                <tkcontrols:SettingsCard
+                    x:Uid="CmdPalCard"
+                    HeaderIcon="{ui:FontIcon Glyph=&#xE721;}"
+                    Visibility="{x:Bind ViewModel.IsCmdPalBundled}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <ProgressRing
+                            Width="20"
+                            Height="20"
+                            IsActive="{x:Bind ViewModel.IsCmdPalBusy, Mode=OneWay}" />
+                        <ToggleSwitch IsEnabled="{x:Bind ViewModel.IsCmdPalIdle, Mode=OneWay}" IsOn="{x:Bind ViewModel.IsCmdPalExtensionInstalled, Mode=TwoWay}" />
+                    </StackPanel>
+                </tkcontrols:SettingsCard>
+
+                <InfoBar
+                    IsClosable="True"
+                    IsOpen="{x:Bind ViewModel.HasCmdPalMessage, Mode=OneWay}"
+                    Message="{x:Bind ViewModel.CmdPalMessage, Mode=OneWay}"
+                    Severity="{x:Bind ViewModel.CmdPalMessageSeverity, Mode=OneWay}">
+                    <InfoBar.ActionButton>
+                        <HyperlinkButton
+                            x:Uid="CmdPalDeveloperModeLink"
+                            NavigateUri="ms-settings:developers"
+                            Visibility="{x:Bind ViewModel.CmdPalNeedsDeveloperMode, Mode=OneWay}" />
+                    </InfoBar.ActionButton>
+                </InfoBar>
+
                 <TextBlock
                     x:Uid="PreviewGroupHeader"
                     Margin="1,28,0,6"

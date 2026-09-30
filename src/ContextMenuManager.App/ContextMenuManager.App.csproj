@@ -33,4 +33,23 @@
     <!-- Launched from the app's own folder (see ContextMenuPreview.RunCaptureHelperAsync). -->
     <ProjectReference Include="..\ContextMenuManager.MenuCapture\ContextMenuManager.MenuCapture.csproj" />
   </ItemGroup>
+
+  <!-- Ships the Command Palette extension's loose package in publish\CmdPal, where CmdPalExtension
+       registers it from. Publish only, so a debug build doesn't lock files of a registered extension. -->
+  <Target Name="PublishCmdPalExtension" AfterTargets="Publish">
+    <MSBuild
+      Projects="..\ContextMenuManager.CmdPal\ContextMenuManager.CmdPal.csproj"
+      Targets="Build"
+      Properties="Configuration=$(Configuration);Platform=$(Platform);RuntimeIdentifier=$(RuntimeIdentifier)"
+      RemoveProperties="PublishDir;_CommandLineDefinedOutputPath">
+      <Output TaskParameter="TargetOutputs" ItemName="CmdPalOutput" />
+    </MSBuild>
+    <PropertyGroup>
+      <CmdPalOutputDir>@(CmdPalOutput->'%(RootDir)%(Directory)')</CmdPalOutputDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <CmdPalFiles Include="$(CmdPalOutputDir)**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(CmdPalFiles)" DestinationFiles="@(CmdPalFiles->'$(PublishDir)CmdPal\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
 </Project>
