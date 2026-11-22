@@ -248,40 +248,66 @@ namespace ContextMenuManager.Core
 
             string probe = string.Join(",", probeClsids);
             string commands = string.Join(",", commandClsids);
-            string arguments = $"--target {argument}"
-                + (probe.Length > 0 ? $" --probe {probe}" : string.Empty)
-                + (commands.Length > 0 ? $" --commands {commands}" : string.Empty);
-            var startInfo = new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory, CaptureHelperExe), arguments)
+            var startInfo = new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory, CaptureHelperExe))
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                StandardOutputEncoding = Encoding.UTF8,
             };
+            startInfo.ArgumentList.Add("--target");
+            startInfo.ArgumentList.Add(argument);
+            if (probe.Length > 0)
+            {
+                startInfo.ArgumentList.Add("--probe");
+                startInfo.ArgumentList.Add(probe);
+            }
 
-            using var process = Process.Start(startInfo) ?? throw new InvalidOperationException($"Could not start {CaptureHelperExe}.");
-            Task<string> output = process.StandardOutput.ReadToEndAsync();
-            Task<string> error = process.StandardError.ReadToEndAsync();
+            if (commands.Length > 0)
+            {
+                startInfo.ArgumentList.Add("--commands");
+                startInfo.ArgumentList.Add(commands);
+            }
 
-            // A shell extension can hang (network drives, licensing prompts); never wait on it forever.
-            using var timeout = new CancellationTokenSource(CaptureTimeout);
+            // Shell extensions run inside the helper and can write to stdout. Keep JSON off that stream.
+            string outputPath = Path.GetTempFileName();
             try
             {
-                await process.WaitForExitAsync(timeout.Token);
-            }
-            catch (OperationCanceledException)
-            {
-                process.Kill(entireProcessTree: true);
-                throw new TimeoutException();
-            }
+                startInfo.ArgumentList.Add("--output");
+                startInfo.ArgumentList.Add(outputPath);
 
-            if (process.ExitCode != 0)
-            {
-                throw new InvalidOperationException((await error).Trim());
-            }
+                using var process = Process.Start(startInfo) ?? throw new InvalidOperationException($"Could not start {CaptureHelperExe}.");
+                using var stdout = process.StandardOutput;
+                using var stderr = process.StandardError;
+                // Drain both streams so a noisy extension cannot fill a pipe and block the helper.
+                using var timeout = new CancellationTokenSource(CaptureTimeout);
+                Task drainOutput = stdout.BaseStream.CopyToAsync(Stream.Null, timeout.Token);
+                Task<string> error = stderr.ReadToEndAsync(timeout.Token);
+                try
+                {
+                    await Task.WhenAll(process.WaitForExitAsync(timeout.Token), drainOutput, error).WaitAsync(timeout.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    if (!process.HasExited)
+                    {
+                        process.Kill(entireProcessTree: true);
+                    }
 
-            return await output;
+                    throw new TimeoutException();
+                }
+
+                if (process.ExitCode != 0)
+                {
+                    throw new InvalidOperationException((await error).Trim());
+                }
+
+                return await File.ReadAllTextAsync(outputPath, Encoding.UTF8);
+            }
+            finally
+            {
+                File.Delete(outputPath);
+            }
         }
 
         private static List<ContextMenuPreviewItem> ParseCapturedItems(JsonElement array)

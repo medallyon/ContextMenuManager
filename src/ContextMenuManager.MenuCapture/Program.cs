@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace ContextMenuManager.MenuCapture
 {
-    // Builds the real Explorer context menu for a sample target and prints it as JSON:
+    // Builds the real Explorer context menu for a sample target and writes it as JSON:
     // {
     //   "items": [{ "text", "shortcut", "verb", "disabled", "separator", "icon": { "w", "h", "bgra" }, "children": [...] }],
     //   "handlers": { "<clsid>": ["top-level text", ...] },
@@ -65,6 +65,7 @@ namespace ContextMenuManager.MenuCapture
             string target = null;
             string probe = null;
             string commands = null;
+            string outputPath = null;
             for (int i = 0; i + 1 < args.Length; i += 2)
             {
                 switch (args[i])
@@ -72,12 +73,13 @@ namespace ContextMenuManager.MenuCapture
                     case "--target": target = args[i + 1]; break;
                     case "--probe": probe = args[i + 1]; break;
                     case "--commands": commands = args[i + 1]; break;
+                    case "--output": outputPath = args[i + 1]; break;
                 }
             }
 
             if (target == null)
             {
-                Console.Error.WriteLine("Usage: --target desktop|background|folder|file|drive [--probe {clsid},{clsid}...] [--commands {clsid},{clsid}...]");
+                Console.Error.WriteLine("Usage: --target desktop|background|folder|file|drive [--probe {clsid},{clsid}...] [--commands {clsid},{clsid}...] [--output path]");
                 return 2;
             }
 
@@ -99,8 +101,10 @@ namespace ContextMenuManager.MenuCapture
                     return 1;
                 }
 
-                using var stdout = Console.OpenStandardOutput();
-                using var writer = new Utf8JsonWriter(stdout);
+                using Stream output = outputPath == null
+                    ? Console.OpenStandardOutput()
+                    : new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.Delete);
+                using var writer = new Utf8JsonWriter(output);
                 writer.WriteStartObject();
                 writer.WritePropertyName("items");
                 WriteMenu(writer, hmenu, sample.Menu, 0);
