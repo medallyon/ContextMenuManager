@@ -58,9 +58,7 @@ namespace ContextMenuManager.App
 
         public ObservableCollection<ContextMenuPreviewItem> PreviewItems { get; } = new ObservableCollection<ContextMenuPreviewItem>();
 
-        public bool IsElevated { get; } = ContextMenuRegistry.IsElevated;
-
-        public bool IsNotElevated => !IsElevated;
+        private bool IsElevated { get; } = ContextMenuRegistry.IsElevated;
 
         public bool IsWindows11 { get; } = Environment.OSVersion.Version.Build >= 22000;
 
@@ -312,7 +310,8 @@ namespace ContextMenuManager.App
         // Re-enumerates live: the registry is the only state.
         public void LoadEntries()
         {
-            _entries = ContextMenuRegistry.Enumerate(IsElevated);
+            // All-users entries request elevation when they are changed.
+            _entries = ContextMenuRegistry.Enumerate(isElevated: true);
             NeedsExplorerRestart = false;
 
             // Every cached item points at an old entry object.
@@ -327,11 +326,21 @@ namespace ContextMenuManager.App
         }
 
         // The page owns the confirmation dialogs; this assumes the write is allowed.
-        public bool ToggleEntry(ContextMenuEntry entry, bool enable)
+        public async Task<bool> ToggleEntryAsync(ContextMenuEntry entry, bool enable)
         {
-            if (!ContextMenuRegistry.Toggle(entry, enable, IsElevated))
+            bool written = entry.Scope == ContextMenuEntryScope.AllUsers && !IsElevated
+                ? await Task.Run(() => ElevatedRegistry.ApplyToLocalMachine(ContextMenuRegistry.GetToggleWrites(entry, enable)))
+                : ContextMenuRegistry.Toggle(entry, enable, IsElevated);
+            if (!written)
             {
                 return false;
+            }
+
+            entry.IsEnabled = enable;
+            if (!_entries.Contains(entry))
+            {
+                // The user refreshed while the elevated write was waiting for approval.
+                LoadEntries();
             }
 
             // The cached menus stay: rows only re-read the entry's state, so no re-capture is needed.

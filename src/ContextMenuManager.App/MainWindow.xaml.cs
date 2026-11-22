@@ -4,8 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -15,7 +13,6 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.Windows.AppLifecycle;
 using Windows.Graphics;
 using WinRT.Interop;
 
@@ -61,6 +58,8 @@ namespace ContextMenuManager.App
 
         private MainViewModel ViewModel { get; } = new MainViewModel();
 
+        private bool _isChangingEntry;
+
         // A fixed width, never wider than the viewport, so no child's desired width can push the content past the window edge.
         private void Scroller_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -84,9 +83,24 @@ namespace ContextMenuManager.App
                 return;
             }
 
-            if (!await ConfirmIfNeededAsync(entry) || !ViewModel.ToggleEntry(entry, requestedState))
+            if (_isChangingEntry)
             {
                 toggle.IsOn = entry.IsEnabled;
+                return;
+            }
+
+            _isChangingEntry = true;
+            try
+            {
+                if ((!await ConfirmIfNeededAsync(entry) || !await ViewModel.ToggleEntryAsync(entry, requestedState))
+                    && ViewModel.SelectedEntry == entry)
+                {
+                    toggle.IsOn = entry.IsEnabled;
+                }
+            }
+            finally
+            {
+                _isChangingEntry = false;
             }
         }
 
@@ -139,25 +153,6 @@ namespace ContextMenuManager.App
                     target.Add(menuItem);
                 }
             }
-        }
-
-        // All-users entries need an elevated process; Windows asks for consent, then this window closes.
-        private void RestartAsAdmin_Click(object sender, RoutedEventArgs e)
-        {
-            // Released first, or the elevated process would redirect to this closing window (see Program).
-            AppInstance.GetCurrent().UnregisterKey();
-            try
-            {
-                Process.Start(new ProcessStartInfo(Environment.ProcessPath) { UseShellExecute = true, Verb = "runas" });
-            }
-            catch (Win32Exception)
-            {
-                // Consent prompt dismissed: keep running unelevated.
-                AppInstance.FindOrRegisterForKey(Program.InstanceKey);
-                return;
-            }
-
-            Close();
         }
 
         private async Task<bool> ConfirmIfNeededAsync(ContextMenuEntry entry)

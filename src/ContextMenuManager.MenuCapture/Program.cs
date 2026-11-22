@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace ContextMenuManager.MenuCapture
 {
-    // Builds the real Explorer context menu for a sample target and prints it as JSON:
+    // Builds the real Explorer context menu for a sample target and writes it as JSON:
     // {
     //   "items": [{ "text", "shortcut", "verb", "disabled", "separator", "icon": { "w", "h", "bgra" }, "children": [...] }],
     //   "handlers": { "<clsid>": ["top-level text", ...] },
@@ -30,6 +30,11 @@ namespace ContextMenuManager.MenuCapture
     {
         private const int MaxDepth = 4;
         private const uint FirstCommandId = 1;
+
+        // A 1×1 grayscale JPEG for handlers that inspect the file contents.
+        private const string SampleJpeg =
+            "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/" +
+            "wAALCAABAAEBAREA/8QAJgABAAAAAAAAAAAAAAAAAAAAABABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQAAPwA//9k=";
 
         // The right-clicked object as a shell extension sees it in IShellExtInit.Initialize.
         private sealed class Sample
@@ -65,6 +70,7 @@ namespace ContextMenuManager.MenuCapture
             string target = null;
             string probe = null;
             string commands = null;
+            string outputPath = null;
             for (int i = 0; i + 1 < args.Length; i += 2)
             {
                 switch (args[i])
@@ -72,12 +78,13 @@ namespace ContextMenuManager.MenuCapture
                     case "--target": target = args[i + 1]; break;
                     case "--probe": probe = args[i + 1]; break;
                     case "--commands": commands = args[i + 1]; break;
+                    case "--output": outputPath = args[i + 1]; break;
                 }
             }
 
             if (target == null)
             {
-                Console.Error.WriteLine("Usage: --target desktop|background|folder|file|drive [--probe {clsid},{clsid}...] [--commands {clsid},{clsid}...]");
+                Console.Error.WriteLine("Usage: --target desktop|background|folder|file|drive|jpg|exe [--probe {clsid},{clsid}...] [--commands {clsid},{clsid}...] [--output path]");
                 return 2;
             }
 
@@ -99,8 +106,10 @@ namespace ContextMenuManager.MenuCapture
                     return 1;
                 }
 
-                using var stdout = Console.OpenStandardOutput();
-                using var writer = new Utf8JsonWriter(stdout);
+                using Stream output = outputPath == null
+                    ? Console.OpenStandardOutput()
+                    : new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.Delete);
+                using var writer = new Utf8JsonWriter(output);
                 writer.WriteStartObject();
                 writer.WritePropertyName("items");
                 WriteMenu(writer, hmenu, sample.Menu, 0);
@@ -187,37 +196,44 @@ namespace ContextMenuManager.MenuCapture
         {
             string sampleRoot = Path.Combine(Path.GetTempPath(), "ContextMenuManager", "Preview");
             string sampleFolder = Path.Combine(sampleRoot, "Sample folder");
-            string sampleFile = Path.Combine(sampleRoot, "Sample file.txt");
             Directory.CreateDirectory(sampleFolder);
-            if (!File.Exists(sampleFile))
-            {
-                File.WriteAllText(sampleFile, string.Empty);
-            }
 
-            string drive = Path.GetPathRoot(Environment.SystemDirectory);
+            string path = target switch
+            {
+                "desktop" => Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+                "background" => sampleRoot,
+                "folder" => sampleFolder,
+                "file" => CreateSampleFile(sampleRoot, "Sample file.txt", Array.Empty<byte>()),
+                "jpg" => CreateSampleFile(sampleRoot, "Sample image.jpg", Convert.FromBase64String(SampleJpeg)),
+                // Inspect the helper's own executable so shell extensions see a valid PE file.
+                "exe" => Environment.ProcessPath,
+                "drive" => Path.GetPathRoot(Environment.SystemDirectory),
+                _ => null,
+            };
             Sample sample = target switch
             {
                 "desktop" => BackgroundMenu(null, owner),
-                "background" => BackgroundMenu(sampleRoot, owner),
-                "folder" => ItemMenu(sampleFolder, owner),
-                "file" => ItemMenu(sampleFile, owner),
-                "drive" => ItemMenu(drive, owner),
-                _ => null,
+                "background" => BackgroundMenu(path, owner),
+                _ => path == null ? null : ItemMenu(path, owner),
             };
 
             if (sample != null)
             {
-                sample.Path = target switch
-                {
-                    "desktop" => Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
-                    "background" => sampleRoot,
-                    "folder" => sampleFolder,
-                    "file" => sampleFile,
-                    _ => drive,
-                };
+                sample.Path = path;
             }
 
             return sample;
+        }
+
+        private static string CreateSampleFile(string directory, string name, byte[] content)
+        {
+            string path = Path.Combine(directory, name);
+            if (!File.Exists(path))
+            {
+                File.WriteAllBytes(path, content);
+            }
+
+            return path;
         }
 
         // The selection an IExplorerCommand is asked about: the one right-clicked object.

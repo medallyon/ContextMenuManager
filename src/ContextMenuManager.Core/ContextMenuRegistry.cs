@@ -27,9 +27,7 @@ namespace ContextMenuManager.Core
     // persisted state - no settings file, no cache to keep in sync - so callers re-enumerate live.
     public static class ContextMenuRegistry
     {
-        // Roots this tool inspects for "...\shellex\ContextMenuHandlers\<Name>" subkeys.
-        // v1 deliberately stops here - the per-extension SystemFileAssociations\<ext>\... tree is
-        // a much bigger (and much lower-value) surface, skipped for now.
+        // Roots inspected for classic handlers and verbs, including the supported file samples.
         private static readonly string[] ContextMenuRoots =
         {
             "*",
@@ -38,6 +36,12 @@ namespace ContextMenuManager.Core
             "AllFilesystemObjects",
             "Drive",
             "DesktopBackground",
+            ".txt",
+            ".jpg",
+            ".exe",
+            "SystemFileAssociations\\.txt",
+            "SystemFileAssociations\\.jpg",
+            "SystemFileAssociations\\.exe",
         };
 
         private const string DisabledValuePrefix = "disabled_";

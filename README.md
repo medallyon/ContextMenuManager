@@ -25,7 +25,7 @@ Every app you install adds something to the File Explorer context menu, and Wind
 
 ## Why use it
 
-- **See the real menu.** Pick a target (desktop, folder background, folder, file, drive) and see exactly what Windows shows for it, including the entries hidden under "Show more options".
+- **See the real menu.** Pick a target (desktop, folder background, folder, .txt, .jpg, .exe, or drive) and see what Windows shows for it, including the entries hidden under "Show more options".
 - **Find the culprit.** Click any item to see which registry key or package registered it.
 - **Turn it off, not away.** No registry key is ever deleted. Switch an item off, and back on whenever you like.
 - **Skip "Show more options".** One toggle brings the full classic menu back as the default.
@@ -46,7 +46,7 @@ The full experience: a live preview of the menu on the left, details and a switc
 
 - Turned-off entries collect in a "Turned off" group at the bottom of the preview, so you can always find them again.
 - Explorer caches its menu, so changes show after File Explorer restarts. There is a button for that.
-- All-users entries need administrator rights. Use **Restart as administrator** in the app.
+- Windows asks for administrator approval when you change an all-users entry.
 - Warnings appear before you change something for every user, or disable something that looks like a built-in Windows component.
 
 | ![The Windows 11 menu toggle and the optional "Manage Context Menu" desktop item](docs/cmm-optionals.png) |
