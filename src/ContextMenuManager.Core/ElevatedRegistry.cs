@@ -5,15 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 
-using ContextMenuManager.Core;
+namespace ContextMenuManager.Core;
 
-namespace ContextMenuManager.CmdPal;
-
-// Writes HKLM through an elevated Windows PowerShell, one UAC prompt per call. The extension can't
-// elevate itself: Command Palette starts it as an unelevated COM server.
-internal static class ElevatedRegistry
+// Writes HKLM through an elevated Windows PowerShell with one UAC prompt per change.
+public static class ElevatedRegistry
 {
     // False when the user cancels the UAC prompt or any write fails.
     public static bool ApplyToLocalMachine(IReadOnlyList<RegistryWrite> writes)
@@ -28,7 +26,8 @@ internal static class ElevatedRegistry
             script.Append($"$key = {open}\nif ($key) {{ {change}; $key.Dispose() }}\n");
         }
 
-        var startInfo = new ProcessStartInfo("powershell.exe")
+        string powerShell = Path.Combine(Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "powershell.exe");
+        var startInfo = new ProcessStartInfo(powerShell)
         {
             // EncodedCommand is UTF-16 base64, so no value needs command-line escaping.
             Arguments = "-NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand " + Convert.ToBase64String(Encoding.Unicode.GetBytes(script.ToString())),
@@ -58,7 +57,7 @@ internal static class ElevatedRegistry
     // PowerShell single-quoted string. PowerShell also ends a string at typographic single quotes,
     // which display names contain ("VLC media player’s"), so those are doubled too.
     // Null is the key's default value, which .NET names "".
-    private static string Quote(string? value)
+    private static string Quote(string value)
     {
         var quoted = new StringBuilder("'");
         foreach (char c in value ?? string.Empty)

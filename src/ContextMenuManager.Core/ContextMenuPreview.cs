@@ -30,14 +30,16 @@ namespace ContextMenuManager.Core
             [ContextMenuPreviewTarget.FolderBackground] = new[] { "View>", "SortBy>", "GroupBy>", "Refresh", "-", "Paste", "PasteShortcut", "Undo" },
         };
 
-        // Registry roots Explorer merges for each target. The sample file is a .txt, matching the capture helper.
+        // Registry roots and packaged item types to match for each preview target.
         private static readonly Dictionary<ContextMenuPreviewTarget, string[]> TargetRoots = new()
         {
             [ContextMenuPreviewTarget.Desktop] = new[] { "DesktopBackground", "Directory\\Background" },
             [ContextMenuPreviewTarget.FolderBackground] = new[] { "Directory\\Background" },
             [ContextMenuPreviewTarget.Folder] = new[] { "Directory", "AllFilesystemObjects" },
-            [ContextMenuPreviewTarget.File] = new[] { "*", "AllFilesystemObjects", ".txt" },
+            [ContextMenuPreviewTarget.File] = new[] { "*", "AllFilesystemObjects", ".txt", "SystemFileAssociations\\.txt" },
             [ContextMenuPreviewTarget.Drive] = new[] { "Drive", "AllFilesystemObjects" },
+            [ContextMenuPreviewTarget.JpegFile] = new[] { "*", "AllFilesystemObjects", ".jpg", "SystemFileAssociations\\.jpg" },
+            [ContextMenuPreviewTarget.ExecutableFile] = new[] { "*", "AllFilesystemObjects", ".exe", "SystemFileAssociations\\.exe" },
         };
 
         private const string CaptureHelperExe = "ContextMenuManager.MenuCapture.exe";
@@ -243,7 +245,10 @@ namespace ContextMenuManager.Core
                 ContextMenuPreviewTarget.FolderBackground => "background",
                 ContextMenuPreviewTarget.Folder => "folder",
                 ContextMenuPreviewTarget.File => "file",
-                _ => "drive",
+                ContextMenuPreviewTarget.Drive => "drive",
+                ContextMenuPreviewTarget.JpegFile => "jpg",
+                ContextMenuPreviewTarget.ExecutableFile => "exe",
+                _ => throw new ArgumentOutOfRangeException(nameof(target)),
             };
 
             string probe = string.Join(",", probeClsids);

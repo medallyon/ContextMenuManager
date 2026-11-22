@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="HklmElevationNotice.Title" xml:space="preserve">
-    <value>Some entries can&apos;t be edited here</value>
-  </data>
-  <data name="HklmElevationNotice.Message" xml:space="preserve">
-    <value>Restart as administrator to edit entries that apply to all users of this PC.</value>
-  </data>
   <data name="RestartExplorerNotice.Title" xml:space="preserve">
     <value>Changes will take effect after File Explorer restarts</value>
   </data>
@@ -264,6 +258,12 @@
   <data name="PreviewTarget_Drive.Content" xml:space="preserve">
     <value>A drive</value>
   </data>
+  <data name="PreviewTarget_JpegFile.Content" xml:space="preserve">
+    <value>A JPEG image (.jpg)</value>
+  </data>
+  <data name="PreviewTarget_ExecutableFile.Content" xml:space="preserve">
+    <value>An executable (.exe)</value>
+  </data>
   <data name="CaptureErrorNotice.Title" xml:space="preserve">
     <value>Couldn&apos;t capture the menu</value>
   </data>
@@ -343,8 +343,5 @@
   </data>
   <data name="PreviewGroupHeader.Text" xml:space="preserve">
     <value>Context menu</value>
-  </data>
-  <data name="RestartAsAdminButton.Content" xml:space="preserve">
-    <value>Restart as administrator</value>
   </data>
 </root>

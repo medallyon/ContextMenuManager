@@ -22,6 +22,8 @@ internal sealed partial class TargetsPage : ListPage
         (ContextMenuPreviewTarget.Folder, "A folder"),
         (ContextMenuPreviewTarget.File, "A file (.txt)"),
         (ContextMenuPreviewTarget.Drive, "A drive"),
+        (ContextMenuPreviewTarget.JpegFile, "A JPEG image (.jpg)"),
+        (ContextMenuPreviewTarget.ExecutableFile, "An executable (.exe)"),
     ];
 
     public TargetsPage()

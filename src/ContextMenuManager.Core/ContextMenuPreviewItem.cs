@@ -14,6 +14,8 @@ namespace ContextMenuManager.Core
         Folder,
         File,
         Drive,
+        JpegFile,
+        ExecutableFile,
     }
 
     // Icon pixels as the capture helper or an icon file delivers them; the UI turns them into an image.

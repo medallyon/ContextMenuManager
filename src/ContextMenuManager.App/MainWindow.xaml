@@ -163,16 +163,6 @@
                     Style="{StaticResource BodyStrongTextBlockStyle}" />
 
                 <InfoBar
-                    x:Uid="HklmElevationNotice"
-                    IsClosable="False"
-                    IsOpen="{x:Bind ViewModel.IsNotElevated}"
-                    Severity="Informational">
-                    <InfoBar.ActionButton>
-                        <Button x:Uid="RestartAsAdminButton" Click="RestartAsAdmin_Click" />
-                    </InfoBar.ActionButton>
-                </InfoBar>
-
-                <InfoBar
                     x:Uid="RestartExplorerNotice"
                     IsClosable="False"
                     IsOpen="{x:Bind ViewModel.NeedsExplorerRestart, Mode=OneWay}"
@@ -194,6 +184,8 @@
                             <ComboBoxItem x:Uid="PreviewTarget_Folder" />
                             <ComboBoxItem x:Uid="PreviewTarget_File" />
                             <ComboBoxItem x:Uid="PreviewTarget_Drive" />
+                            <ComboBoxItem x:Uid="PreviewTarget_JpegFile" />
+                            <ComboBoxItem x:Uid="PreviewTarget_ExecutableFile" />
                         </ComboBox>
                         <Button x:Uid="RefreshButton" Click="{x:Bind ViewModel.LoadEntries}" />
                     </StackPanel>
